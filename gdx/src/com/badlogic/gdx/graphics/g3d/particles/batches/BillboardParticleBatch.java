@@ -289,10 +289,6 @@ public class BillboardParticleBatch extends BufferedParticleBatch<BillboardContr
 		return texture;
 	}
 
-	public BlendingAttribute getBlendingAttribute () {
-		return blendingAttribute;
-	}
-
 	@Override
 	public void begin () {
 		super.begin();

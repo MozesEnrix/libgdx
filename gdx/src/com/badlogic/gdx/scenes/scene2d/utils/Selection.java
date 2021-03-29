@@ -14,7 +14,7 @@ import java.util.Iterator;
  * {@link ChangeEvent#cancel()}.
  * @author Nathan Sweet */
 public class Selection<T> implements Disableable, Iterable<T> {
-	private @Null Actor actor;
+	@Null private Actor actor;
 	final OrderedSet<T> selected = new OrderedSet();
 	private final OrderedSet<T> old = new OrderedSet();
 	boolean isDisabled;
@@ -36,7 +36,7 @@ public class Selection<T> implements Disableable, Iterable<T> {
 		if (isDisabled) return;
 		snapshot();
 		try {
-			if ((toggle || UIUtils.ctrl()) && selected.contains(item)) {
+			if (((toggle && !required && selected.size == 1) || UIUtils.ctrl()) && selected.contains(item)) {
 				if (required && selected.size == 1) return;
 				selected.remove(item);
 				lastSelected = null;
@@ -82,7 +82,8 @@ public class Selection<T> implements Disableable, Iterable<T> {
 	}
 
 	/** Returns the first selected item, or null. */
-	public @Null T first () {
+	@Null
+	public T first () {
 		return selected.size == 0 ? null : selected.first();
 	}
 
@@ -235,7 +236,8 @@ public class Selection<T> implements Disableable, Iterable<T> {
 	}
 
 	/** Makes a best effort to return the last item selected, else returns an arbitrary item or null if the selection is empty. */
-	public @Null T getLastSelected () {
+	@Null
+	public T getLastSelected () {
 		if (lastSelected != null) {
 			return lastSelected;
 		} else if (selected.size > 0) {

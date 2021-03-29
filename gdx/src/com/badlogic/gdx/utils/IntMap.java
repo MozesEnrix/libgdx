@@ -16,11 +16,11 @@
 
 package com.badlogic.gdx.utils;
 
+import static com.badlogic.gdx.utils.ObjectSet.*;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import static com.badlogic.gdx.utils.ObjectSet.tableSize;
 
 /** An unordered map where the keys are unboxed ints and values are objects. No allocation is done except when growing the table
  * size.
@@ -65,9 +65,9 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
 	 * hash. */
 	protected int mask;
 
-	private transient Entries entries1, entries2;
-	private transient Values values1, values2;
-	private transient Keys keys1, keys2;
+	private Entries entries1, entries2;
+	private Values values1, values2;
+	private Keys keys1, keys2;
 
 	/** Creates a new map with an initial capacity of 51 and a load factor of 0.8. */
 	public IntMap () {
@@ -137,7 +137,8 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
 		}
 	}
 
-	public @Null V put (int key, @Null V value) {
+	@Null
+	public V put (int key, @Null V value) {
 		if (key == 0) {
 			V oldValue = zeroValue;
 			zeroValue = value;
@@ -195,8 +196,8 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
 		return i >= 0 ? valueTable[i] : defaultValue;
 	}
 
-	/** Returns the value for the removed key, or null if the key is not in the map. */
-	public @Null V remove (int key) {
+	@Null
+	public V remove (int key) {
 		if (key == 0) {
 			if (!hasZeroValue) return null;
 			hasZeroValue = false;
@@ -211,18 +212,14 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
 		int[] keyTable = this.keyTable;
 		V[] valueTable = this.valueTable;
 		V oldValue = valueTable[i];
-		int mask = this.mask, next = i + 1 & mask;
-		while ((key = keyTable[next]) != 0) {
-			int placement = place(key);
-			if ((next - placement & mask) > (i - placement & mask)) {
-				keyTable[i] = key;
-				valueTable[i] = valueTable[next];
-				i = next;
-			}
+		int next = i + 1 & mask;
+		while ((key = keyTable[next]) != 0 && next != place(key)) {
+			keyTable[i] = key;
+			valueTable[i] = valueTable[next];
+			i = next;
 			next = next + 1 & mask;
 		}
 		keyTable[i] = 0;
-		valueTable[i] = null;
 		size--;
 		return oldValue;
 	}
@@ -277,15 +274,15 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
 		if (value == null) {
 			if (hasZeroValue && zeroValue == null) return true;
 			int[] keyTable = this.keyTable;
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (keyTable[i] != 0 && valueTable[i] == null) return true;
 		} else if (identity) {
 			if (value == zeroValue) return true;
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (valueTable[i] == value) return true;
 		} else {
 			if (hasZeroValue && value.equals(zeroValue)) return true;
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (value.equals(valueTable[i])) return true;
 		}
 		return false;
@@ -306,15 +303,15 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
 		if (value == null) {
 			if (hasZeroValue && zeroValue == null) return 0;
 			int[] keyTable = this.keyTable;
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (keyTable[i] != 0 && valueTable[i] == null) return keyTable[i];
 		} else if (identity) {
 			if (value == zeroValue) return 0;
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (valueTable[i] == value) return keyTable[i];
 		} else {
 			if (hasZeroValue && value.equals(zeroValue)) return 0;
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (value.equals(valueTable[i])) return keyTable[i];
 		}
 		return notFound;
@@ -565,17 +562,13 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
 				int[] keyTable = map.keyTable;
 				V[] valueTable = map.valueTable;
 				int mask = map.mask, next = i + 1 & mask, key;
-				while ((key = keyTable[next]) != 0) {
-					int placement = map.place(key);
-					if ((next - placement & mask) > (i - placement & mask)) {
-						keyTable[i] = key;
-						valueTable[i] = valueTable[next];
-						i = next;
-					}
+				while ((key = keyTable[next]) != 0 && next != map.place(key)) {
+					keyTable[i] = key;
+					valueTable[i] = valueTable[next];
+					i = next;
 					next = next + 1 & mask;
 				}
 				keyTable[i] = 0;
-				valueTable[i] = null;
 				if (i != currentIndex) --nextIndex;
 			}
 			currentIndex = INDEX_ILLEGAL;
@@ -627,7 +620,8 @@ public class IntMap<V> implements Iterable<IntMap.Entry<V>> {
 			return hasNext;
 		}
 
-		public @Null V next () {
+		@Null
+		public V next () {
 			if (!hasNext) throw new NoSuchElementException();
 			if (!valid) throw new GdxRuntimeException("#iterator() cannot be used nested.");
 			V value;

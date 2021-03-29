@@ -314,18 +314,16 @@ public class DelaunayTriangulator {
 				originalIndices[up / 2] = tempIndex;
 			}
 		}
-		if (value > values[up]) {
-			values[lower] = values[up];
-			values[up] = value;
+		values[lower] = values[up];
+		values[up] = value;
 
-			tempValue = values[lower + 1];
-			values[lower + 1] = values[up + 1];
-			values[up + 1] = tempValue;
+		tempValue = values[lower + 1];
+		values[lower + 1] = values[up + 1];
+		values[up + 1] = tempValue;
 
-			tempIndex = originalIndices[lower / 2];
-			originalIndices[lower / 2] = originalIndices[up / 2];
-			originalIndices[up / 2] = tempIndex;
-		}
+		tempIndex = originalIndices[lower / 2];
+		originalIndices[lower / 2] = originalIndices[up / 2];
+		originalIndices[up / 2] = tempIndex;
 		return up;
 	}
 

@@ -428,7 +428,8 @@ public class XmlReader {
 		current.setAttribute(name, value);
 	}
 
-	protected @Null String entity (String name) {
+	@Null
+	protected String entity (String name) {
 		if (name.equals("lt")) return "<";
 		if (name.equals("gt")) return ">";
 		if (name.equals("amp")) return "&";
@@ -577,7 +578,8 @@ public class XmlReader {
 
 		/** @param name the name of the child {@link Element}
 		 * @return the first child having the given name or null, does not recurse */
-		public @Null Element getChildByName (String name) {
+		@Null
+		public Element getChildByName (String name) {
 			if (children == null) return null;
 			for (int i = 0; i < children.size; i++) {
 				Element element = children.get(i);
@@ -593,7 +595,8 @@ public class XmlReader {
 
 		/** @param name the name of the child {@link Element}
 		 * @return the first child having the given name or null, recurses */
-		public @Null Element getChildByNameRecursive (String name) {
+		@Null
+		public Element getChildByNameRecursive (String name) {
 			if (children == null) return null;
 			for (int i = 0; i < children.size; i++) {
 				Element element = children.get(i);

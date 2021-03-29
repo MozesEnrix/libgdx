@@ -983,33 +983,25 @@ b2ContactFilter defaultFilter;
 	private final ContactImpulse impulse = new ContactImpulse(this, 0);
 
 	private void beginContact (long contactAddr) {
-		if (contactListener != null) {
-			contact.addr = contactAddr;
-			contactListener.beginContact(contact);
-		}
+		contact.addr = contactAddr;
+		if (contactListener != null) contactListener.beginContact(contact);
 	}
 
 	private void endContact (long contactAddr) {
-		if (contactListener != null) {
-			contact.addr = contactAddr;
-			contactListener.endContact(contact);
-		}
+		contact.addr = contactAddr;
+		if (contactListener != null) contactListener.endContact(contact);
 	}
 
 	private void preSolve (long contactAddr, long manifoldAddr) {
-		if (contactListener != null) {
-			contact.addr = contactAddr;
-			manifold.addr = manifoldAddr;
-			contactListener.preSolve(contact, manifold);
-		}
+		contact.addr = contactAddr;
+		manifold.addr = manifoldAddr;
+		if (contactListener != null) contactListener.preSolve(contact, manifold);
 	}
 
 	private void postSolve (long contactAddr, long impulseAddr) {
-		if (contactListener != null) {
-			contact.addr = contactAddr;
-			impulse.addr = impulseAddr;
-			contactListener.postSolve(contact, impulse);
-		}
+		contact.addr = contactAddr;
+		impulse.addr = impulseAddr;
+		if (contactListener != null) contactListener.postSolve(contact, impulse);
 	}
 
 	private boolean reportFixture (long addr) {

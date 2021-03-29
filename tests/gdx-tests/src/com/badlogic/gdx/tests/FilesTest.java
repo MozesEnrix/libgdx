@@ -151,11 +151,9 @@ public class FilesTest extends GdxTest {
 		try {
 			testClasspath();
 			testInternal();
-			if (!(Gdx.app.getType() == ApplicationType.WebGL)) {
-				testExternal();
-				testAbsolute();
-				testLocal();
-			}
+			testExternal();
+			testAbsolute();
+			testLocal();
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -216,7 +214,6 @@ public class FilesTest extends GdxTest {
 		}
 		if (!dir.isDirectory()) fail();
 		if (dir.list().length == 0) fail();
-		Gdx.app.log("FilesTest", "Files in data: " + Arrays.toString(dir.list()) + " (" + dir.list().length + ")");
 		FileHandle child = dir.child("badlogic.jpg");
 		if (!child.name().equals("badlogic.jpg")) fail();
 		if (!child.nameWithoutExtension().equals("badlogic")) fail();
@@ -224,16 +221,14 @@ public class FilesTest extends GdxTest {
 		if (Gdx.app.getType() != ApplicationType.Android) {
 			if (!child.parent().exists()) fail();
 		}
-		if (!(Gdx.app.getType() == ApplicationType.WebGL)) {
-			FileHandle copy = Gdx.files.external("badlogic.jpg-copy");
-			copy.delete();
-			if (copy.exists()) fail();
-			handle.copyTo(copy);
-			if (!copy.exists()) fail();
-			if (copy.length() != 68465) fail();
-			copy.delete();
-			if (copy.exists()) fail();
-		}
+		FileHandle copy = Gdx.files.external("badlogic.jpg-copy");
+		copy.delete();
+		if (copy.exists()) fail();
+		handle.copyTo(copy);
+		if (!copy.exists()) fail();
+		if (copy.length() != 68465) fail();
+		copy.delete();
+		if (copy.exists()) fail();
 		handle.read().close();
 		if (handle.readBytes().length != handle.length()) fail();
 	}

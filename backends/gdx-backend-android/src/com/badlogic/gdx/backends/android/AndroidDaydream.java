@@ -38,6 +38,8 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.badlogic.gdx.utils.SnapshotArray;
 
+import java.util.Arrays;
+
 /** An implementation of the {@link Application} interface for Android. Create an {@link Activity} that derives from this class. In
  * the Activity#onCreate(Bundle) method call the {@link #initialize(ApplicationListener)} method specifying the configuration for
  * the {@link GLSurfaceView}.
@@ -111,9 +113,10 @@ public class AndroidDaydream extends DreamService implements AndroidApplicationB
 		setApplicationLogger(new AndroidApplicationLogger());
 		graphics = new AndroidGraphics(this, config, config.resolutionStrategy == null ? new FillResolutionStrategy()
 			: config.resolutionStrategy);
-		input = createInput(this, this, graphics.view, config);
-		audio = createAudio(this, config);
-		files = createFiles();
+		input = AndroidInputFactory.newAndroidInput(this, this, graphics.view, config);
+		audio = new AndroidAudio(this, config);
+		this.getFilesDir(); // workaround for Android bug #10515463
+		files = new AndroidFiles(this.getAssets(), this.getFilesDir().getAbsolutePath());
 		net = new AndroidNet(this, config);
 		this.listener = listener;
 		this.handler = new Handler();
@@ -156,7 +159,7 @@ public class AndroidDaydream extends DreamService implements AndroidApplicationB
 
 		// detect an already connected bluetooth keyboardAvailable
 		if (getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS)
-			input.setKeyboardAvailable(true);
+			this.getInput().keyboardAvailable = true;
 	}
 
 	protected FrameLayout.LayoutParams createLayoutParams () {
@@ -173,7 +176,7 @@ public class AndroidDaydream extends DreamService implements AndroidApplicationB
 	}
 
 	protected void hideStatusBar (AndroidApplicationConfiguration config) {
-		if (!config.hideStatusBar) return;
+		if (!config.hideStatusBar || getVersion() < 11) return;
 
 		View rootView = getWindow().getDecorView();
 
@@ -187,8 +190,14 @@ public class AndroidDaydream extends DreamService implements AndroidApplicationB
 		graphics.setContinuousRendering(true);
 		graphics.pause();
 
-		input.onDreamingStopped();
+		input.unregisterSensorListeners();
 
+		int[] realId = input.realId;
+		// erase pointer ids. this sucks donkeyballs...
+		Arrays.fill(realId, -1);
+		boolean[] touched = input.touched;
+		// erase touched state. this also sucks donkeyballs...
+		Arrays.fill(touched, false);
 		graphics.clearManagedCaches();
 		graphics.destroy();
 		graphics.setContinuousRendering(isContinuous);
@@ -207,7 +216,7 @@ public class AndroidDaydream extends DreamService implements AndroidApplicationB
 		Gdx.graphics = this.getGraphics();
 		Gdx.net = this.getNet();
 
-		input.onDreamingStarted();
+		getInput().registerSensorListeners();
 
 		if (graphics != null) {
 			graphics.onResumeGLSurfaceView();
@@ -298,7 +307,7 @@ public class AndroidDaydream extends DreamService implements AndroidApplicationB
 		super.onConfigurationChanged(config);
 		boolean keyboardAvailable = false;
 		if (config.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) keyboardAvailable = true;
-		input.setKeyboardAvailable(keyboardAvailable);
+		input.keyboardAvailable = keyboardAvailable;
 	}
 
 	@Override
@@ -403,21 +412,6 @@ public class AndroidDaydream extends DreamService implements AndroidApplicationB
 	@Override
 	public Handler getHandler () {
 		return this.handler;
-	}
-
-	@Override
-	public AndroidAudio createAudio (Context context, AndroidApplicationConfiguration config) {
-		return new DefaultAndroidAudio(context, config);
-	}
-
-	@Override
-	public AndroidInput createInput (Application activity, Context context, Object view, AndroidApplicationConfiguration config) {
-		return new DefaultAndroidInput(this, this, graphics.view, config);
-	}
-
-	protected AndroidFiles createFiles() {
-		this.getFilesDir(); // workaround for Android bug #10515463
-		return new DefaultAndroidFiles(this.getAssets(), this, true);
 	}
 
 	@Override

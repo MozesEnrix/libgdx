@@ -24,7 +24,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GLProfilerErrorTest extends GdxTest {
 	SpriteBatch batch;
@@ -56,7 +55,8 @@ public class GLProfilerErrorTest extends GdxTest {
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.begin();
 

@@ -40,7 +40,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GwtTest extends GdxTest {
 	ShaderProgram shader;
@@ -88,17 +87,19 @@ public class GwtTest extends GdxTest {
 		cache.setColor(Color.RED);
 		cache.setText("This is a Test", 0, 0);
 
-		atlas = new TextureAtlas(Gdx.files.internal("data/pack.atlas"));
+		atlas = new TextureAtlas(Gdx.files.internal("data/pack"));
 	}
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		texture.bind(0);
-		shader.bind();
+		shader.begin();
 		shader.setUniformMatrix("u_projView", matrix);
 		shader.setUniformi("u_texture", 0);
 		mesh.render(shader, GL20.GL_TRIANGLES);
+		shader.end();
 
 		batch.begin();
 		batch.draw(atlas.findRegion("font"), 0, 100);

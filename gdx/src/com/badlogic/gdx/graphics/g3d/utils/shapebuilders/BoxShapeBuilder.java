@@ -16,6 +16,7 @@
 
 package com.badlogic.gdx.graphics.g3d.utils.shapebuilders;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;

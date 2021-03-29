@@ -19,6 +19,7 @@ package com.badlogic.gdx.graphics.g2d;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;

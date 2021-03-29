@@ -18,6 +18,7 @@ package com.badlogic.gdx.tests;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,7 +26,6 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.tests.utils.GdxTest;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class SpriteBatchTest extends GdxTest implements InputProcessor {
@@ -55,7 +55,8 @@ public class SpriteBatchTest extends GdxTest implements InputProcessor {
 	}
 
 	private void renderNormal () {
-		ScreenUtils.clear(0.7f, 0.7f, 0.7f, 1);
+		Gdx.gl.glClearColor(0.7f, 0.7f, 0.7f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		float begin = 0;
 		float end = 0;
@@ -111,7 +112,8 @@ public class SpriteBatchTest extends GdxTest implements InputProcessor {
 	}
 
 	private void renderSprites () {
-		ScreenUtils.clear(0.7f, 0.7f, 0.7f, 1);
+		Gdx.gl.glClearColor(0.7f, 0.7f, 0.7f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		float begin = 0;
 		float end = 0;
@@ -260,7 +262,7 @@ public class SpriteBatchTest extends GdxTest implements InputProcessor {
 	}
 
 	@Override
-	public boolean scrolled (float amountX, float amountY) {
+	public boolean scrolled (int amount) {
 		return false;
 	}
 

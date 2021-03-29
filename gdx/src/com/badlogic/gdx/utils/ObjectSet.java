@@ -61,7 +61,7 @@ public class ObjectSet<T> implements Iterable<T> {
 	 * hash. */
 	protected int mask;
 
-	private transient ObjectSetIterator iterator1, iterator2;
+	private ObjectSetIterator iterator1, iterator2;
 
 	/** Creates a new set with an initial capacity of 51 and a load factor of 0.8. */
 	public ObjectSet () {
@@ -185,13 +185,10 @@ public class ObjectSet<T> implements Iterable<T> {
 		int i = locateKey(key);
 		if (i < 0) return false;
 		T[] keyTable = this.keyTable;
-		int mask = this.mask, next = i + 1 & mask;
-		while ((key = keyTable[next]) != null) {
-			int placement = place(key);
-			if ((next - placement & mask) > (i - placement & mask)) {
-				keyTable[i] = key;
-				i = next;
-			}
+		int next = i + 1 & mask;
+		while ((key = keyTable[next]) != null && next != place(key)) {
+			keyTable[i] = key;
+			i = next;
 			next = next + 1 & mask;
 		}
 		keyTable[i] = null;
@@ -243,7 +240,8 @@ public class ObjectSet<T> implements Iterable<T> {
 		return locateKey(key) >= 0;
 	}
 
-	public @Null T get (T key) {
+	@Null
+	public T get (T key) {
 		int i = locateKey(key);
 		return i < 0 ? null : keyTable[i];
 	}
@@ -354,7 +352,8 @@ public class ObjectSet<T> implements Iterable<T> {
 	static int tableSize (int capacity, float loadFactor) {
 		if (capacity < 0) throw new IllegalArgumentException("capacity must be >= 0: " + capacity);
 		int tableSize = MathUtils.nextPowerOfTwo(Math.max(2, (int)Math.ceil(capacity / loadFactor)));
-		if (tableSize > 1 << 30) throw new IllegalArgumentException("The required capacity is too large: " + capacity);
+		// Note: 0x40000000 is "1 << 30" but crashes under certain circumstances - see: https://github.com/libgdx/libgdx/issues/4065
+		if (tableSize > 0x40000000) throw new IllegalArgumentException("The required capacity is too large: " + capacity);
 		return tableSize;
 	}
 
@@ -393,12 +392,9 @@ public class ObjectSet<T> implements Iterable<T> {
 			K[] keyTable = set.keyTable;
 			int mask = set.mask, next = i + 1 & mask;
 			K key;
-			while ((key = keyTable[next]) != null) {
-				int placement = set.place(key);
-				if ((next - placement & mask) > (i - placement & mask)) {
-					keyTable[i] = key;
-					i = next;
-				}
+			while ((key = keyTable[next]) != null && next != set.place(key)) {
+				keyTable[i] = key;
+				i = next;
 				next = next + 1 & mask;
 			}
 			keyTable[i] = null;

@@ -51,7 +51,8 @@ public class AtomicQueue<T> {
 		return true;
 	}
 
-	public @Null T poll () {
+	@Null
+	public T poll () {
 		int read = readIndex.get();
 		int write = writeIndex.get();
 		if (read == write) return null;

@@ -31,7 +31,6 @@ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.tests.utils.GdxTest;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class VoxelTest extends GdxTest {
 	SpriteBatch spriteBatch;
@@ -72,7 +71,8 @@ public class VoxelTest extends GdxTest {
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(0.4f, 0.4f, 0.4f, 1f, true);
+		Gdx.gl.glClearColor(0.4f, 0.4f, 0.4f, 1f);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		modelBatch.begin(camera);
 		modelBatch.render(voxelWorld, lights);
 		modelBatch.end();

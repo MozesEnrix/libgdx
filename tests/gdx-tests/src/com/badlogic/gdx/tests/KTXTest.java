@@ -20,6 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cubemap;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -42,7 +43,6 @@ import com.badlogic.gdx.graphics.glutils.KTXTextureData;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.tests.utils.GdxTest;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 /** Simple test and example for the KTX/ZKTX file format
  * @author Vincent Bousquet */
@@ -161,7 +161,8 @@ public class KTXTest extends GdxTest {
 		int gw = Gdx.graphics.getWidth(), gh = Gdx.graphics.getHeight();
 		int pw = gw > gh ? gw / 2 : gw, ph = gw > gh ? gh : gh / 2;
 
-		ScreenUtils.clear(0, 0, 0, 1, true);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		// cubemap
 		Gdx.gl.glViewport(gw - pw, gh - ph, pw, ph);

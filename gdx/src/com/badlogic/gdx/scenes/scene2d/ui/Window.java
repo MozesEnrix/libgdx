@@ -197,7 +197,6 @@ public class Window extends Table {
 	public void setStyle (WindowStyle style) {
 		if (style == null) throw new IllegalArgumentException("style cannot be null.");
 		this.style = style;
-
 		setBackground(style.background);
 		titleLabel.setStyle(new LabelStyle(style.titleFont, style.titleFontColor));
 		invalidateHierarchy();
@@ -272,7 +271,8 @@ public class Window extends Table {
 		drawTitleTable = false; // Avoid drawing the title table again in drawChildren.
 	}
 
-	public @Null Actor hit (float x, float y, boolean touchable) {
+	@Null
+	public Actor hit (float x, float y, boolean touchable) {
 		if (!isVisible()) return null;
 		Actor hit = super.hit(x, y, touchable);
 		if (hit == null && isModal && (!touchable || getTouchable() == Touchable.enabled)) return this;
@@ -339,25 +339,27 @@ public class Window extends Table {
 	/** The style for a window, see {@link Window}.
 	 * @author Nathan Sweet */
 	static public class WindowStyle {
-		public @Null Drawable background;
+		/** Optional. */
+		@Null public Drawable background;
 		public BitmapFont titleFont;
-		public @Null Color titleFontColor = new Color(1, 1, 1, 1);
-		public @Null Drawable stageBackground;
+		/** Optional. */
+		public Color titleFontColor = new Color(1, 1, 1, 1);
+		/** Optional. */
+		@Null public Drawable stageBackground;
 
 		public WindowStyle () {
 		}
 
 		public WindowStyle (BitmapFont titleFont, Color titleFontColor, @Null Drawable background) {
+			this.background = background;
 			this.titleFont = titleFont;
 			this.titleFontColor.set(titleFontColor);
-			this.background = background;
 		}
 
 		public WindowStyle (WindowStyle style) {
-			background = style.background;
-			titleFont = style.titleFont;
-			if (style.titleFontColor != null) titleFontColor = new Color(style.titleFontColor);
-			background = style.background;
+			this.background = style.background;
+			this.titleFont = style.titleFont;
+			this.titleFontColor = new Color(style.titleFontColor);
 		}
 	}
 }

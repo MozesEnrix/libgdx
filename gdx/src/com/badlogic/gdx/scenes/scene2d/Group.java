@@ -41,7 +41,7 @@ public class Group extends Actor implements Cullable {
 	private final Matrix4 computedTransform = new Matrix4();
 	private final Matrix4 oldTransform = new Matrix4();
 	boolean transform = true;
-	private @Null Rectangle cullingArea;
+	@Null private Rectangle cullingArea;
 
 	public void act (float delta) {
 		super.act(delta);
@@ -235,11 +235,13 @@ public class Group extends Actor implements Cullable {
 
 	/** @return May be null.
 	 * @see #setCullingArea(Rectangle) */
-	public @Null Rectangle getCullingArea () {
+	@Null
+	public Rectangle getCullingArea () {
 		return cullingArea;
 	}
 
-	public @Null Actor hit (float x, float y, boolean touchable) {
+	@Null
+	public Actor hit (float x, float y, boolean touchable) {
 		if (touchable && getTouchable() == Touchable.disabled) return null;
 		if (!isVisible()) return null;
 		Vector2 point = tmp;
@@ -336,7 +338,7 @@ public class Group extends Actor implements Cullable {
 	 * {@link Actor#clearActions() cleared} so the actions will be returned to their
 	 * {@link Action#setPool(com.badlogic.gdx.utils.Pool) pool}, if any. This is not done automatically.
 	 * @param unfocus If true, {@link Stage#unfocus(Actor)} is called.
-	 * @return the actor removed from this group. */
+	 * @return the actor removed from this group or null. */
 	public Actor removeActorAt (int index, boolean unfocus) {
 		Actor actor = children.removeIndex(index);
 		if (unfocus) {
@@ -349,20 +351,11 @@ public class Group extends Actor implements Cullable {
 		return actor;
 	}
 
-	/** Removes all actors from this group and unfocuses them. Calls {@link #clearChildren(boolean)} with true. */
-	public void clearChildren () {
-		clearChildren(true);
-	}
-
 	/** Removes all actors from this group. */
-	public void clearChildren (boolean unfocus) {
+	public void clearChildren () {
 		Actor[] actors = children.begin();
 		for (int i = 0, n = children.size; i < n; i++) {
 			Actor child = actors[i];
-			if (unfocus) {
-				Stage stage = getStage();
-				if (stage != null) stage.unfocus(child);
-			}
 			child.setStage(null);
 			child.setParent(null);
 		}
@@ -371,21 +364,16 @@ public class Group extends Actor implements Cullable {
 		childrenChanged();
 	}
 
-	/** Removes all children, actions, and listeners from this group. The children are unfocused. */
+	/** Removes all children, actions, and listeners from this group. */
 	public void clear () {
 		super.clear();
-		clearChildren(true);
-	}
-
-	/** Removes all children, actions, and listeners from this group. */
-	public void clear (boolean unfocus) {
-		super.clear();
-		clearChildren(unfocus);
+		clearChildren();
 	}
 
 	/** Returns the first actor found with the specified name. Note this recursively compares the name of every actor in the
 	 * group. */
-	public @Null <T extends Actor> T findActor (String name) {
+	@Null
+	public <T extends Actor> T findActor (String name) {
 		Array<Actor> children = this.children;
 		for (int i = 0, n = children.size; i < n; i++)
 			if (name.equals(children.get(i).getName())) return (T)children.get(i);
@@ -403,7 +391,7 @@ public class Group extends Actor implements Cullable {
 		super.setStage(stage);
 		Actor[] childrenArray = children.items;
 		for (int i = 0, n = children.size; i < n; i++)
-			childrenArray[i].setStage(stage); // StackOverflowError here means the group is its own ascendant.
+			childrenArray[i].setStage(stage); // StackOverflowError here means the group is its own ancestor.
 	}
 
 	/** Swaps two actors by index. Returns false if the swap did not occur because the indexes were out of bounds. */

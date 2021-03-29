@@ -98,7 +98,8 @@ public class PooledLinkedList<T> {
 	/** Gets the next item in the list
 	 * 
 	 * @return the next item in the list or null if there are no more items */
-	public @Null T next () {
+	@Null
+	public T next () {
 		if (iter == null) return null;
 
 		T payload = iter.payload;
@@ -110,7 +111,8 @@ public class PooledLinkedList<T> {
 	/** Gets the previous item in the list
 	 * 
 	 * @return the previous item in the list or null if there are no more items */
-	public @Null T previous () {
+	@Null
+	public T previous () {
 		if (iter == null) return null;
 
 		T payload = iter.payload;
@@ -154,7 +156,8 @@ public class PooledLinkedList<T> {
 	}
 
 	/** Removes the tail of the list regardless of iteration status */
-	public @Null T removeLast () {
+	@Null
+	public T removeLast () {
 		if (tail == null) {
 			return null;
 		}

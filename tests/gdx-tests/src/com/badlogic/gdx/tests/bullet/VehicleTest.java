@@ -32,6 +32,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btDefaultVehicleRaycaster;
+import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRaycastVehicle;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;

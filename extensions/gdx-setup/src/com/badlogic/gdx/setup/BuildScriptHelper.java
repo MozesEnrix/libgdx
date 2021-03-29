@@ -34,21 +34,24 @@ public class BuildScriptHelper {
 		write(wr, "repositories {");
 		write(wr, DependencyBank.mavenLocal);
 		write(wr, DependencyBank.mavenCentral);
-		write(wr, DependencyBank.gradlePlugins);
+		write(wr, "maven { url \"" + DependencyBank.gradlePlugins + "\" }");
 		write(wr, "maven { url \"" + DependencyBank.libGDXSnapshotsUrl + "\" }");
+		write(wr, DependencyBank.jCenter);
 		write(wr, DependencyBank.google);
 		write(wr, "}");
 		//dependencies
 		write(wr, "dependencies {");
 		if (projects.contains(ProjectType.HTML)) {
 			write(wr, "classpath '" + DependencyBank.gwtPluginImport + "'");
-			write(wr, "classpath '" + DependencyBank.grettyPluginImport + "'");
 		}
 		if (projects.contains(ProjectType.ANDROID)) {
 			write(wr, "classpath '" + DependencyBank.androidPluginImport + "'");
 		}
 		if (projects.contains(ProjectType.IOS)) {
 			write(wr, "classpath '" + DependencyBank.roboVMPluginImport + "'");
+		}
+		if (projects.contains(ProjectType.IOSMOE)) {
+			write(wr, "classpath '" + DependencyBank.moePluginImport + "'");
 		}
 		write(wr, language.buildScriptDependencies + "\n");
 		write(wr, "}");
@@ -68,14 +71,13 @@ public class BuildScriptHelper {
 		write(wr, "box2DLightsVersion = '" + DependencyBank.box2DLightsVersion + "'");
 		write(wr, "ashleyVersion = '" + DependencyBank.ashleyVersion + "'");
 		write(wr, "aiVersion = '" + DependencyBank.aiVersion + "'");
-		write(wr, "gdxControllersVersion = '" + DependencyBank.controllersVersion + "'");
 		write(wr, "}");
 		space(wr);
 		write(wr, "repositories {");
 		write(wr, DependencyBank.mavenLocal);
 		write(wr, DependencyBank.mavenCentral);
+		write(wr, DependencyBank.jCenter);
 		write(wr, DependencyBank.google);
-		write(wr, DependencyBank.gradlePlugins);
 		write(wr, "maven { url \"" + DependencyBank.libGDXSnapshotsUrl + "\" }");
 		write(wr, "maven { url \"" + DependencyBank.libGDXReleaseUrl + "\" }");
 		write(wr, "}");
@@ -104,7 +106,7 @@ public class BuildScriptHelper {
 			if (dep.getDependencies(project) == null) continue;
 			for (String moduleDependency : dep.getDependencies(project)) {
 				if (moduleDependency == null) continue;
-				if (project.equals(ProjectType.ANDROID) && moduleDependency.contains("native")) {
+				if ((project.equals(ProjectType.ANDROID) || project.equals(ProjectType.IOSMOE)) && moduleDependency.contains("native")) {
 					write(wr, "natives \"" + moduleDependency + "\"");
 				} else {
 					write(wr, "api \"" + moduleDependency + "\"");
@@ -116,7 +118,7 @@ public class BuildScriptHelper {
 	}
 
 	private static void addConfigurations(ProjectType project, BufferedWriter wr) throws IOException {
-		if (project.equals(ProjectType.ANDROID)) {
+		if (project.equals(ProjectType.ANDROID) || project.equals(ProjectType.IOSMOE)) {
 			write(wr, "configurations { natives }");
 		}
 	}

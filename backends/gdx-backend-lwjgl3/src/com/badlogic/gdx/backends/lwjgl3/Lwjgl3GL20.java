@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -48,19 +49,19 @@ class Lwjgl3GL20 implements com.badlogic.gdx.graphics.GL20 {
 
 	private FloatBuffer toFloatBuffer (float v[], int offset, int count) {
 		ensureBufferCapacity(count << 2);
-		((Buffer) floatBuffer).clear();
-		((Buffer) floatBuffer).limit(count);
+		floatBuffer.clear();
+		floatBuffer.limit(count);
 		floatBuffer.put(v,  offset, count);
-		((Buffer) floatBuffer).position(0);
+		floatBuffer.position(0);
 		return floatBuffer;
 	}
 
 	private IntBuffer toIntBuffer (int v[], int offset, int count) {
 		ensureBufferCapacity(count << 2);
-		((Buffer) intBuffer).clear();
-		((Buffer) intBuffer).limit(count);
+		intBuffer.clear();
+		intBuffer.limit(count);
 		intBuffer.put(v, offset, count);
-		((Buffer) intBuffer).position(0);
+		intBuffer.position(0);
 		return intBuffer;
 	}
 
@@ -351,12 +352,20 @@ class Lwjgl3GL20 implements com.badlogic.gdx.graphics.GL20 {
 		EXTFramebufferObject.glGenerateMipmapEXT(target);
 	}
 
-	public String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
-		return GL20.glGetActiveAttrib(program, index, 256, size, type);
+	public String glGetActiveAttrib (int program, int index, IntBuffer size, Buffer type) {
+		IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
+		String name = GL20.glGetActiveAttrib(program, index, 256, size, typeTmp);
+		size.put(typeTmp.get(0));
+		if (type instanceof IntBuffer) ((IntBuffer)type).put(typeTmp.get(1));
+		return name;
 	}
 
-	public String glGetActiveUniform (int program, int index, IntBuffer size, IntBuffer type) {
-		return GL20.glGetActiveUniform(program, index, 256, size, type);
+	public String glGetActiveUniform (int program, int index, IntBuffer size, Buffer type) {
+		IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
+		String name = GL20.glGetActiveUniform(program, index, 256, size, typeTmp);
+		size.put(typeTmp.get(0));
+		if (type instanceof IntBuffer) ((IntBuffer)type).put(typeTmp.get(1));
+		return name;
 	}
 
 	public void glGetAttachedShaders (int program, int maxcount, Buffer count, IntBuffer shaders) {
@@ -796,7 +805,7 @@ class Lwjgl3GL20 implements com.badlogic.gdx.graphics.GL20 {
 
 	public void glVertexAttribPointer (int indx, int size, int type, boolean normalized, int stride, Buffer buffer) {
 		if (buffer instanceof ByteBuffer) {
-			if (type == GL_BYTE)
+			if (type == GL_BYTE)				
 				GL20.glVertexAttribPointer(indx, size, type, normalized, stride, (ByteBuffer)buffer);
 			else if (type == GL_UNSIGNED_BYTE)
 				GL20.glVertexAttribPointer(indx, size, type, normalized, stride, (ByteBuffer)buffer);

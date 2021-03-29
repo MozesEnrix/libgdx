@@ -18,11 +18,13 @@ package com.badlogic.gdx.tests.bullet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.FloatCounter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.PerformanceCounter;
+import com.badlogic.gdx.utils.SharedLibraryLoader;
 
 /** @author xoppa */
 public class BulletTest implements ApplicationListener, InputProcessor, GestureListener {
@@ -68,7 +70,7 @@ public class BulletTest implements ApplicationListener, InputProcessor, GestureL
 	}
 
 	@Override
-	public boolean scrolled (float amountX, float amountY) {
+	public boolean scrolled (int amount) {
 		return false;
 	}
 

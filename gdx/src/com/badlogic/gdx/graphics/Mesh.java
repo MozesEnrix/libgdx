@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 
 package com.badlogic.gdx.graphics;
 
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
@@ -314,11 +313,6 @@ public class Mesh implements Disposable {
 		return this;
 	}
 
-	/** @return Indicates whether this mesh uses instancing. */
-	public boolean isInstanced () {
-		return this.isInstanced;
-	}
-
 	/** Sets the vertices of this Mesh. The attributes are assumed to be given in float format.
 	 *
 	 * @param vertices the vertices.
@@ -389,9 +383,9 @@ public class Mesh implements Disposable {
 			throw new IllegalArgumentException("not enough room in vertices array, has " + vertices.length + " floats, needs "
 				+ count);
 		int pos = getVerticesBuffer().position();
-		((Buffer) getVerticesBuffer()).position(srcOffset);
+		getVerticesBuffer().position(srcOffset);
 		getVerticesBuffer().get(vertices, destOffset, count);
-		((Buffer) getVerticesBuffer()).position(pos);
+		getVerticesBuffer().position(pos);
 		return vertices;
 	}
 
@@ -455,9 +449,9 @@ public class Mesh implements Disposable {
 		if ((indices.length - destOffset) < count)
 			throw new IllegalArgumentException("not enough room in indices array, has " + indices.length + " shorts, needs " + count);
 		int pos = getIndicesBuffer().position();
-		((Buffer) getIndicesBuffer()).position(srcOffset);
+		getIndicesBuffer().position(srcOffset);
 		getIndicesBuffer().get(indices, destOffset, count);
-		((Buffer) getIndicesBuffer()).position(pos);
+		getIndicesBuffer().position(pos);
 	}
 
 	/** @return the number of defined indices */
@@ -544,7 +538,7 @@ public class Mesh implements Disposable {
 	 * </p>
 	 *
 	 * <p>
-	 * This method must only be called after the {@link ShaderProgram#bind()} method has been called!
+	 * This method must only be called after the {@link ShaderProgram#begin()} method has been called!
 	 * </p>
 	 *
 	 * <p>
@@ -568,7 +562,7 @@ public class Mesh implements Disposable {
 	 * </p>
 	 *
 	 * <p>
-	 * This method must only be called after the {@link ShaderProgram#bind()} method has been called!
+	 * This method must only be called after the {@link ShaderProgram#begin()} method has been called!
 	 * </p>
 	 *
 	 * <p>
@@ -595,7 +589,7 @@ public class Mesh implements Disposable {
 	 * </p>
 	 *
 	 * <p>
-	 * This method must only be called after the {@link ShaderProgram#bind()} method has been called!
+	 * This method must only be called after the {@link ShaderProgram#begin()} method has been called!
 	 * </p>
 	 *
 	 * <p>
@@ -617,11 +611,11 @@ public class Mesh implements Disposable {
 				ShortBuffer buffer = indices.getBuffer();
 				int oldPosition = buffer.position();
 				int oldLimit = buffer.limit();
-				((Buffer) buffer).position(offset);
-				((Buffer) buffer).limit(offset + count);
+				buffer.position(offset);
+				buffer.limit(offset + count);
 				Gdx.gl20.glDrawElements(primitiveType, count, GL20.GL_UNSIGNED_SHORT, buffer);
-				((Buffer) buffer).position(oldPosition);
-				((Buffer) buffer).limit(oldLimit);
+				buffer.position(oldPosition);
+				buffer.limit(oldLimit);
 			} else {
 				Gdx.gl20.glDrawArrays(primitiveType, offset, count);
 			}
@@ -661,7 +655,7 @@ public class Mesh implements Disposable {
 	}
 
 	/** Returns the first {@link VertexAttribute} having the given {@link Usage}.
-	 *
+	 * 
 	 * @param usage the Usage.
 	 * @return the VertexAttribute or null if no attribute with that usage was found. */
 	public VertexAttribute getVertexAttribute (int usage) {
@@ -685,7 +679,7 @@ public class Mesh implements Disposable {
 
 	/** Calculates the {@link BoundingBox} of the vertices contained in this mesh. In case no vertices are defined yet a
 	 * {@link GdxRuntimeException} is thrown. This method creates a new BoundingBox instance.
-	 *
+	 * 
 	 * @return the bounding box. */
 	public BoundingBox calculateBoundingBox () {
 		BoundingBox bbox = new BoundingBox();
@@ -695,7 +689,7 @@ public class Mesh implements Disposable {
 
 	/** Calculates the {@link BoundingBox} of the vertices contained in this mesh. In case no vertices are defined yet a
 	 * {@link GdxRuntimeException} is thrown.
-	 *
+	 * 
 	 * @param bbox the bounding box to store the result in. */
 	public void calculateBoundingBox (BoundingBox bbox) {
 		final int numVertices = getNumVertices();
@@ -782,7 +776,7 @@ public class Mesh implements Disposable {
 		case 1:
 			if (numIndices > 0) {
 				for (int i = offset; i < end; i++) {
-					final int idx = (index.get(i) & 0xFFFF) * vertexSize + posoff;
+					final int idx = index.get(i) * vertexSize + posoff;
 					tmpV.set(verts.get(idx), 0, 0);
 					if (transform != null) tmpV.mul(transform);
 					out.ext(tmpV);
@@ -799,7 +793,7 @@ public class Mesh implements Disposable {
 		case 2:
 			if (numIndices > 0) {
 				for (int i = offset; i < end; i++) {
-					final int idx = (index.get(i) & 0xFFFF) * vertexSize + posoff;
+					final int idx = index.get(i) * vertexSize + posoff;
 					tmpV.set(verts.get(idx), verts.get(idx + 1), 0);
 					if (transform != null) tmpV.mul(transform);
 					out.ext(tmpV);
@@ -816,7 +810,7 @@ public class Mesh implements Disposable {
 		case 3:
 			if (numIndices > 0) {
 				for (int i = offset; i < end; i++) {
-					final int idx = (index.get(i) & 0xFFFF) * vertexSize + posoff;
+					final int idx = index.get(i) * vertexSize + posoff;
 					tmpV.set(verts.get(idx), verts.get(idx + 1), verts.get(idx + 2));
 					if (transform != null) tmpV.mul(transform);
 					out.ext(tmpV);
@@ -858,7 +852,7 @@ public class Mesh implements Disposable {
 		switch (posAttrib.numComponents) {
 		case 1:
 			for (int i = offset; i < end; i++) {
-				final int idx = (index.get(i) & 0xFFFF) * vertexSize + posoff;
+				final int idx = index.get(i) * vertexSize + posoff;
 				tmpV.set(verts.get(idx), 0, 0);
 				if (transform != null) tmpV.mul(transform);
 				final float r = tmpV.sub(centerX, centerY, centerZ).len2();
@@ -867,7 +861,7 @@ public class Mesh implements Disposable {
 			break;
 		case 2:
 			for (int i = offset; i < end; i++) {
-				final int idx = (index.get(i) & 0xFFFF) * vertexSize + posoff;
+				final int idx = index.get(i) * vertexSize + posoff;
 				tmpV.set(verts.get(idx), verts.get(idx + 1), 0);
 				if (transform != null) tmpV.mul(transform);
 				final float r = tmpV.sub(centerX, centerY, centerZ).len2();
@@ -876,7 +870,7 @@ public class Mesh implements Disposable {
 			break;
 		case 3:
 			for (int i = offset; i < end; i++) {
-				final int idx = (index.get(i) & 0xFFFF) * vertexSize + posoff;
+				final int idx = index.get(i) * vertexSize + posoff;
 				tmpV.set(verts.get(idx), verts.get(idx + 1), verts.get(idx + 2));
 				if (transform != null) tmpV.mul(transform);
 				final float r = tmpV.sub(centerX, centerY, centerZ).len2();
@@ -986,7 +980,7 @@ public class Mesh implements Disposable {
 
 	/** Method to scale the positions in the mesh. Normals will be kept as is. This is a potentially slow operation, use with care.
 	 * It will also create a temporary float[] which will be garbage collected.
-	 *
+	 * 
 	 * @param scaleX scale on x
 	 * @param scaleY scale on y
 	 * @param scaleZ scale on z */
@@ -1030,7 +1024,7 @@ public class Mesh implements Disposable {
 
 	/** Method to transform the positions in the mesh. Normals will be kept as is. This is a potentially slow operation, use with
 	 * care. It will also create a temporary float[] which will be garbage collected.
-	 *
+	 * 
 	 * @param matrix the transformation matrix */
 	public void transform (final Matrix4 matrix) {
 		transform(matrix, 0, getNumVertices());
@@ -1101,7 +1095,7 @@ public class Mesh implements Disposable {
 
 	/** Method to transform the texture coordinates in the mesh. This is a potentially slow operation, use with care. It will also
 	 * create a temporary float[] which will be garbage collected.
-	 *
+	 * 
 	 * @param matrix the transformation matrix */
 	public void transformUV (final Matrix3 matrix) {
 		transformUV(matrix, 0, getNumVertices());

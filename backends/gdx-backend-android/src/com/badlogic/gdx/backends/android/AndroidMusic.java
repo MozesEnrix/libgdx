@@ -48,7 +48,9 @@ public class AndroidMusic implements Music, MediaPlayer.OnCompletionListener {
 		} finally {
 			player = null;
 			onCompletionListener = null;
-			audio.notifyMusicDisposed(this);
+			synchronized (audio.musics) {
+				audio.musics.remove(this);
+			}
 		}
 	}
 

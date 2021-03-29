@@ -28,6 +28,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.tests.AnimationTest;
 import com.badlogic.gdx.tests.MusicTest;
 import com.badlogic.gdx.tests.UITest;
 

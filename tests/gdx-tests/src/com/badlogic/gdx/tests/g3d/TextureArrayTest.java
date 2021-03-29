@@ -18,7 +18,6 @@ package com.badlogic.gdx.tests.g3d;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -28,17 +27,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureArray;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.profiling.GLErrorListener;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.tests.utils.GdxTest;
-import com.badlogic.gdx.tests.utils.GdxTestConfig;
 
 /** @author Tomski **/
-@GdxTestConfig(requireGL30=true)
 public class TextureArrayTest extends GdxTest {
 
 	TextureArray textureArray;
@@ -71,14 +66,8 @@ public class TextureArrayTest extends GdxTest {
 		cameraController = new FirstPersonCameraController(camera);
 		Gdx.input.setInputProcessor(cameraController);
 
-		FileHandle [] texFiles = new FileHandle[texPaths.length];
-		for(int i=0 ; i<texPaths.length ; i++){
-			texFiles[i] = Gdx.files.internal(texPaths[i]);
-		}
-		
-		textureArray = new TextureArray(true, texFiles);
+		textureArray = new TextureArray(texPaths);
 		textureArray.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-		textureArray.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 		shaderProgram = new ShaderProgram(Gdx.files.internal("data/shaders/texturearray.vert"), Gdx.files.internal("data/shaders/texturearray.frag"));
 		System.out.println(shaderProgram.getLog());
 
@@ -131,11 +120,12 @@ public class TextureArrayTest extends GdxTest {
 
 		textureArray.bind();
 
-		shaderProgram.bind();
+		shaderProgram.begin();
 		shaderProgram.setUniformi("u_textureArray", 0);
 		shaderProgram.setUniformMatrix("u_projViewTrans", camera.combined);
 		shaderProgram.setUniformMatrix("u_modelView", modelView);
 		terrain.render(shaderProgram, GL20.GL_TRIANGLES);
+		shaderProgram.end();
 	}
 
 	@Override

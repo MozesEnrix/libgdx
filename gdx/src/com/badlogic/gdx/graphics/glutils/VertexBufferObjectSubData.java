@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 
 package com.badlogic.gdx.graphics.glutils;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -32,11 +31,11 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
  * <p>
  * If the OpenGL ES context was lost you can call {@link #invalidate()} to recreate a new OpenGL vertex buffer object.
  * <p>
- * The data is bound via glVertexAttribPointer() according to the attribute aliases specified via {@link VertexAttributes}
+ * The data is bound via glVertexAttribPointer() according to the attribute aliases specified via {@link VertexAttributes} 
  * in the constructor.
  * <p>
  * VertexBufferObjects must be disposed via the {@link #dispose()} method when no longer needed
- *
+ * 
  * @author mzechner */
 public class VertexBufferObjectSubData implements VertexData {
 	final VertexAttributes attributes;
@@ -48,9 +47,9 @@ public class VertexBufferObjectSubData implements VertexData {
 	final int usage;
 	boolean isDirty = false;
 	boolean isBound = false;
-
+	
 	/** Constructs a new interleaved VertexBufferObject.
-	 *
+	 * 
 	 * @param isStatic whether the vertex data is static.
 	 * @param numVertices the maximum number of vertices
 	 * @param attributes the {@link VertexAttributes}. */
@@ -59,7 +58,7 @@ public class VertexBufferObjectSubData implements VertexData {
 	}
 
 	/** Constructs a new interleaved VertexBufferObject.
-	 *
+	 * 
 	 * @param isStatic whether the vertex data is static.
 	 * @param numVertices the maximum number of vertices
 	 * @param attributes the {@link VertexAttribute}s. */
@@ -72,8 +71,8 @@ public class VertexBufferObjectSubData implements VertexData {
 		usage = isStatic ? GL20.GL_STATIC_DRAW : GL20.GL_DYNAMIC_DRAW;
 		buffer = byteBuffer.asFloatBuffer();
 		bufferHandle = createBufferObject();
-		((Buffer) buffer).flip();
-		((Buffer) byteBuffer).flip();
+		buffer.flip();
+		byteBuffer.flip();
 	}
 
 	private int createBufferObject () {
@@ -117,14 +116,14 @@ public class VertexBufferObjectSubData implements VertexData {
 		isDirty = true;
 		if (isDirect) {
 			BufferUtils.copy(vertices, byteBuffer, count, offset);
-			((Buffer) buffer).position(0);
-			((Buffer) buffer).limit(count);
+			buffer.position(0);
+			buffer.limit(count);
 		} else {
-			((Buffer) buffer).clear();
+			buffer.clear();
 			buffer.put(vertices, offset, count);
-			((Buffer) buffer).flip();
-			((Buffer) byteBuffer).position(0);
-			((Buffer) byteBuffer).limit(buffer.limit() << 2);
+			buffer.flip();
+			byteBuffer.position(0);
+			byteBuffer.limit(buffer.limit() << 2);
 		}
 
 		bufferChanged();
@@ -135,9 +134,9 @@ public class VertexBufferObjectSubData implements VertexData {
 		isDirty = true;
 		if (isDirect) {
 			final int pos = byteBuffer.position();
-			((Buffer) byteBuffer).position(targetOffset * 4);
+			byteBuffer.position(targetOffset * 4);
 			BufferUtils.copy(vertices, sourceOffset, count, byteBuffer);
-			((Buffer) byteBuffer).position(pos);
+			byteBuffer.position(pos);
 		} else
 			throw new GdxRuntimeException("Buffer must be allocated direct."); // Should never happen
 
@@ -145,7 +144,7 @@ public class VertexBufferObjectSubData implements VertexData {
 	}
 
 	/** Binds this VertexBufferObject for rendering via glDrawArrays or glDrawElements
-	 *
+	 * 
 	 * @param shader the shader */
 	@Override
 	public void bind (final ShaderProgram shader) {
@@ -158,7 +157,7 @@ public class VertexBufferObjectSubData implements VertexData {
 
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
 		if (isDirty) {
-			((Buffer) byteBuffer).limit(buffer.limit() * 4);
+			byteBuffer.limit(buffer.limit() * 4);
 			gl.glBufferData(GL20.GL_ARRAY_BUFFER, byteBuffer.limit(), byteBuffer, usage);
 			isDirty = false;
 		}
@@ -189,7 +188,7 @@ public class VertexBufferObjectSubData implements VertexData {
 	}
 
 	/** Unbinds this VertexBufferObject.
-	 *
+	 * 
 	 * @param shader the shader */
 	@Override
 	public void unbind (final ShaderProgram shader) {

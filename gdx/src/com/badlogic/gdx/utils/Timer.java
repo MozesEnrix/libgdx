@@ -248,15 +248,13 @@ public class Timer {
 	 * @author Nathan Sweet */
 	static class TimerThread implements Runnable, LifecycleListener {
 		final Files files;
-		final Application app;
 		final Array<Timer> instances = new Array(1);
 		Timer instance;
 		long pauseTimeMillis;
 
 		public TimerThread () {
 			files = Gdx.files;
-			app = Gdx.app;
-			app.addLifecycleListener(this);
+			Gdx.app.addLifecycleListener(this);
 			resume();
 
 			Thread thread = new Thread(this, "Timer");
@@ -315,7 +313,7 @@ public class Timer {
 				instances.clear();
 				threadLock.notifyAll();
 			}
-			app.removeLifecycleListener(this);
+			Gdx.app.removeLifecycleListener(this);
 		}
 	}
 }

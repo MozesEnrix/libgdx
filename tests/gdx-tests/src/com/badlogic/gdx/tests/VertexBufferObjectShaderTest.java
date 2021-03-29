@@ -49,7 +49,7 @@ public class VertexBufferObjectShaderTest extends GdxTest {
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		gl.glEnable(GL20.GL_TEXTURE_2D);
-		shader.bind();
+		shader.begin();
 		shader.setUniformi("u_texture", 0);
 		texture.bind();
 		vbo.bind(shader);
@@ -57,6 +57,7 @@ public class VertexBufferObjectShaderTest extends GdxTest {
 		gl.glDrawElements(GL20.GL_TRIANGLES, 3, GL20.GL_UNSIGNED_SHORT, indices.getBuffer().position());
 		indices.unbind();
 		vbo.unbind(shader);
+		shader.end();
 	}
 
 	@Override

@@ -17,14 +17,15 @@
 package com.badlogic.gdx.tests.g2d;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.tests.utils.GdxTest;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 /** Demonstrates support of progressive JPEG.
  * @author HD_92 (blueriverteam@gmail.com) */
@@ -44,7 +45,8 @@ public class ProgressiveJPEGTest extends GdxTest {
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 1, 1, 1);
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.begin();
 		drawable.draw(batch, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

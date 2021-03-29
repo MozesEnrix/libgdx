@@ -17,7 +17,6 @@
 package com.badlogic.gdx.tests;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -44,7 +43,7 @@ public class TextInputDialogTest extends GdxTest {
 			public void canceled () {
 				message = "cancled by user";
 			}
-		}, "enter something funny", "funny", "something funny", Input.OnscreenKeyboardType.Default);
+		}, "enter something funny", "funny", "something funny");
 	}
 
 	public void render () {

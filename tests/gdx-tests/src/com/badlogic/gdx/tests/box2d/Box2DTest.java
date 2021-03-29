@@ -232,7 +232,7 @@ public abstract class Box2DTest implements ApplicationListener, InputProcessor {
 	}
 
 	@Override
-	public boolean scrolled (float amountX, float amountY) {
+	public boolean scrolled (int amount) {
 		return false;
 	}
 

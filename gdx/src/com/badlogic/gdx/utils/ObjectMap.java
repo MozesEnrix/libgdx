@@ -16,11 +16,11 @@
 
 package com.badlogic.gdx.utils;
 
+import static com.badlogic.gdx.utils.ObjectSet.*;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import static com.badlogic.gdx.utils.ObjectSet.tableSize;
 
 /** An unordered map where the keys and values are objects. Null keys are not allowed. No allocation is done except when growing
  * the table size.
@@ -64,9 +64,9 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 	 * hash. */
 	protected int mask;
 
-	transient Entries entries1, entries2;
-	transient Values values1, values2;
-	transient Keys keys1, keys2;
+	Entries entries1, entries2;
+	Values values1, values2;
+	Keys keys1, keys2;
 
 	/** Creates a new map with an initial capacity of 51 and a load factor of 0.8. */
 	public ObjectMap () {
@@ -135,7 +135,8 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 	}
 
 	/** Returns the old value associated with the specified key, or null. */
-	public @Null V put (K key, @Null V value) {
+	@Null
+	public V put (K key, @Null V value) {
 		int i = locateKey(key);
 		if (i >= 0) { // Existing key was found.
 			V oldValue = valueTable[i];
@@ -173,7 +174,8 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 	}
 
 	/** Returns the value for the specified key, or null if the key is not in the map. */
-	public @Null <T extends K> V get (T key) {
+	@Null
+	public <T extends K> V get (T key) {
 		int i = locateKey(key);
 		return i < 0 ? null : valueTable[i];
 	}
@@ -184,21 +186,18 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 		return i < 0 ? defaultValue : valueTable[i];
 	}
 
-	/** Returns the value for the removed key, or null if the key is not in the map. */
-	public @Null V remove (K key) {
+	@Null
+	public V remove (K key) {
 		int i = locateKey(key);
 		if (i < 0) return null;
 		K[] keyTable = this.keyTable;
 		V[] valueTable = this.valueTable;
 		V oldValue = valueTable[i];
-		int mask = this.mask, next = i + 1 & mask;
-		while ((key = keyTable[next]) != null) {
-			int placement = place(key);
-			if ((next - placement & mask) > (i - placement & mask)) {
-				keyTable[i] = key;
-				valueTable[i] = valueTable[next];
-				i = next;
-			}
+		int next = i + 1 & mask;
+		while ((key = keyTable[next]) != null && next != place(key)) {
+			keyTable[i] = key;
+			valueTable[i] = valueTable[next];
+			i = next;
 			next = next + 1 & mask;
 		}
 		keyTable[i] = null;
@@ -252,13 +251,13 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 		V[] valueTable = this.valueTable;
 		if (value == null) {
 			K[] keyTable = this.keyTable;
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (keyTable[i] != null && valueTable[i] == null) return true;
 		} else if (identity) {
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (valueTable[i] == value) return true;
 		} else {
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (value.equals(valueTable[i])) return true;
 		}
 		return false;
@@ -272,17 +271,18 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 	 * every value, which may be an expensive operation.
 	 * @param identity If true, uses == to compare the specified value with values in the map. If false, uses
 	 *           {@link #equals(Object)}. */
-	public @Null K findKey (@Null Object value, boolean identity) {
+	@Null
+	public K findKey (@Null Object value, boolean identity) {
 		V[] valueTable = this.valueTable;
 		if (value == null) {
 			K[] keyTable = this.keyTable;
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (keyTable[i] != null && valueTable[i] == null) return keyTable[i];
 		} else if (identity) {
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (valueTable[i] == value) return keyTable[i];
 		} else {
-			for (int i = valueTable.length - 1; i >= 0; i--)
+			for (int i = valueTable.length - 1; i > 0; i--)
 				if (value.equals(valueTable[i])) return keyTable[i];
 		}
 		return null;
@@ -374,7 +374,7 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 		return toString(", ", true);
 	}
 
-	protected String toString (String separator, boolean braces) {
+	private String toString (String separator, boolean braces) {
 		if (size == 0) return braces ? "{}" : "";
 		java.lang.StringBuilder buffer = new java.lang.StringBuilder(32);
 		if (braces) buffer.append('{');
@@ -407,12 +407,9 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 		return entries();
 	}
 
-	/** Returns an iterator for the entries in the map. Remove is supported.
-	 * <p>
-	 * If {@link Collections#allocateIterators} is false, the same iterator instance is returned each time this method is called.
-	 * Use the {@link Entries} constructor for nested or multithreaded iteration. */
+	/** Returns an iterator for the entries in the map. Remove is supported. Note that the same iterator instance is returned each
+	 * time this method is called. Use the {@link Entries} constructor for nested or multithreaded iteration. */
 	public Entries<K, V> entries () {
-		if (Collections.allocateIterators) return new Entries(this);
 		if (entries1 == null) {
 			entries1 = new Entries(this);
 			entries2 = new Entries(this);
@@ -429,12 +426,9 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 		return entries2;
 	}
 
-	/** Returns an iterator for the values in the map. Remove is supported.
-	 * <p>
-	 * If {@link Collections#allocateIterators} is false, the same iterator instance is returned each time this method is called.
-	 * Use the {@link Values} constructor for nested or multithreaded iteration. */
+	/** Returns an iterator for the values in the map. Remove is supported. Note that the same iterator instance is returned each
+	 * time this method is called. Use the {@link Values} constructor for nested or multithreaded iteration. */
 	public Values<V> values () {
-		if (Collections.allocateIterators) return new Values(this);
 		if (values1 == null) {
 			values1 = new Values(this);
 			values2 = new Values(this);
@@ -451,12 +445,9 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 		return values2;
 	}
 
-	/** Returns an iterator for the keys in the map. Remove is supported.
-	 * <p>
-	 * If {@link Collections#allocateIterators} is false, the same iterator instance is returned each time this method is called.
-	 * Use the {@link Keys} constructor for nested or multithreaded iteration. */
+	/** Returns an iterator for the keys in the map. Remove is supported. Note that the same iterator instance is returned each
+	 * time this method is called. Use the {@link Keys} constructor for nested or multithreaded iteration. */
 	public Keys<K> keys () {
-		if (Collections.allocateIterators) return new Keys(this);
 		if (keys1 == null) {
 			keys1 = new Keys(this);
 			keys2 = new Keys(this);
@@ -475,7 +466,7 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 
 	static public class Entry<K, V> {
 		public K key;
-		public @Null V value;
+		@Null public V value;
 
 		public String toString () {
 			return key + "=" + value;
@@ -518,13 +509,10 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 			V[] valueTable = map.valueTable;
 			int mask = map.mask, next = i + 1 & mask;
 			K key;
-			while ((key = keyTable[next]) != null) {
-				int placement = map.place(key);
-				if ((next - placement & mask) > (i - placement & mask)) {
-					keyTable[i] = key;
-					valueTable[i] = valueTable[next];
-					i = next;
-				}
+			while ((key = keyTable[next]) != null && next != map.place(key)) {
+				keyTable[i] = key;
+				valueTable[i] = valueTable[next];
+				i = next;
 				next = next + 1 & mask;
 			}
 			keyTable[i] = null;
@@ -574,7 +562,8 @@ public class ObjectMap<K, V> implements Iterable<ObjectMap.Entry<K, V>> {
 			return hasNext;
 		}
 
-		public @Null V next () {
+		@Null
+		public V next () {
 			if (!hasNext) throw new NoSuchElementException();
 			if (!valid) throw new GdxRuntimeException("#iterator() cannot be used nested.");
 			V value = map.valueTable[nextIndex];

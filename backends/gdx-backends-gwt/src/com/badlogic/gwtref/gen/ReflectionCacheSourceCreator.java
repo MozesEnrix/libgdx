@@ -225,10 +225,9 @@ public class ReflectionCacheSourceCreator {
 	}
 
 	private void out (String message, int nesting) {
-		String nestedMsg = "";
 		for (int i = 0; i < nesting; i++)
-			nestedMsg += "  ";
-		logger.log(Type.INFO, nestedMsg);
+			System.out.print("  ");
+		System.out.println(message);
 	}
 
 	int nesting = 0;

@@ -16,7 +16,6 @@
 
 package com.badlogic.gdx.graphics.glutils;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -181,7 +180,7 @@ public abstract class GLFrameBuffer<T extends GLTexture> implements Disposable {
 			for (int i = 0; i < colorTextureCounter; i++) {
 				buffer.put(GL30.GL_COLOR_ATTACHMENT0 + i);
 			}
-			((Buffer) buffer).position(0);
+			buffer.position(0);
 			Gdx.gl30.glDrawBuffers(colorTextureCounter, buffer);
 		} else {
 			attachFrameBufferColorTexture(textureAttachments.first());
@@ -440,7 +439,7 @@ public abstract class GLFrameBuffer<T extends GLTexture> implements Disposable {
 		}
 	}
 
-	public static abstract class GLFrameBufferBuilder<U extends GLFrameBuffer<? extends GLTexture>> {
+	protected static abstract class GLFrameBufferBuilder<U extends GLFrameBuffer<? extends GLTexture>> {
 		protected int width, height;
 
 		protected Array<FrameBufferTextureAttachmentSpec> textureAttachmentSpecs = new Array<FrameBufferTextureAttachmentSpec>();

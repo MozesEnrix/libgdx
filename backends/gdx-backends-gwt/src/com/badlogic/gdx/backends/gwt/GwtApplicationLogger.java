@@ -17,6 +17,7 @@
 package com.badlogic.gdx.backends.gwt;
 
 import com.badlogic.gdx.ApplicationLogger;
+import com.badlogic.gdx.Gdx;
 import com.google.gwt.user.client.ui.TextArea;
 
 /**

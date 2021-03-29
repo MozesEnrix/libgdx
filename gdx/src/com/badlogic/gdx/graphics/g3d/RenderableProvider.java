@@ -16,6 +16,7 @@
 
 package com.badlogic.gdx.graphics.g3d;
 
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 

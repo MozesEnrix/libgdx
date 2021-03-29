@@ -19,6 +19,7 @@ package com.badlogic.gdx.tests.extensions;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,7 +27,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeBitmapFontData;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.tests.utils.GdxTest;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class FreeTypeTest extends GdxTest {
 	BitmapFont font;
@@ -65,7 +65,8 @@ public class FreeTypeTest extends GdxTest {
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.begin();
 		font.setColor(Color.RED);

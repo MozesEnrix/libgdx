@@ -21,13 +21,11 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Net.HttpRequest;
 
 /** Provides utility methods to work with the {@link HttpRequest} content and parameters. */
-public final class HttpParametersUtils {
-
-	private HttpParametersUtils () {
-	}
+public class HttpParametersUtils {
 
 	public static String defaultEncoding = "UTF-8";
 	public static String nameValueSeparator = "=";

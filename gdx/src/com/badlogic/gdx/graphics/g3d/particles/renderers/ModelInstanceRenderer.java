@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleChannels;
 import com.badlogic.gdx.graphics.g3d.particles.ParticleControllerComponent;
+import com.badlogic.gdx.graphics.g3d.particles.batches.BillboardParticleBatch;
 import com.badlogic.gdx.graphics.g3d.particles.batches.ModelInstanceParticleBatch;
 import com.badlogic.gdx.graphics.g3d.particles.batches.ParticleBatch;
 

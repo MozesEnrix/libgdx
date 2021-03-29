@@ -18,6 +18,7 @@ package com.badlogic.gdx.tests.g3d.shadows.system.classical;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -26,7 +27,6 @@ import com.badlogic.gdx.tests.g3d.shadows.utils.DirectionalAnalyzer;
 import com.badlogic.gdx.tests.g3d.shadows.utils.LightFilter;
 import com.badlogic.gdx.tests.g3d.shadows.utils.NearFarAnalyzer;
 import com.badlogic.gdx.tests.g3d.shadows.utils.ShadowMapAllocator;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 /** Classical shadow system uses shadow accumulation method. For each light, a depth map is generated and a second pass accumulate
  * the shadows. Obviously, the second pass must use the same lighting system as the main rendering pass. Compared to Realistic
@@ -87,7 +87,8 @@ public class ClassicalShadowSystem extends FirstPassBaseShadowSystem {
 	};
 
 	protected void beginPass2 () {
-		ScreenUtils.clear(0, 0, 0, 0, true);
+		Gdx.gl.glClearColor(0, 0, 0, 0);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		firstCallPass2 = true;
 		nbCall = 0;
 	}

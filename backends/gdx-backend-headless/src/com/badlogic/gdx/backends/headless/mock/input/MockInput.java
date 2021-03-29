@@ -151,17 +151,7 @@ public class MockInput implements Input {
 	}
 
 	@Override
-	public void getTextInput(TextInputListener listener, String title, String text, String hint, OnscreenKeyboardType type) {
-
-	}
-
-	@Override
 	public void setOnscreenKeyboardVisible(boolean visible) {
-
-	}
-
-	@Override
-	public void setOnscreenKeyboardVisible(boolean visible, OnscreenKeyboardType type) {
 
 	}
 

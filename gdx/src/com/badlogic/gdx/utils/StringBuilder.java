@@ -1262,9 +1262,10 @@ public class StringBuilder implements Appendable, CharSequence {
 	}
 
 	public int hashCode () {
-		int result = 31 + length;
-		for (int index = 0; index < length; ++index)
-			result = 31 * result + chars[index];
+		final int prime = 31;
+		int result = 1;
+		result = prime + length;
+		result = prime * result + Arrays.hashCode(chars);
 		return result;
 	}
 

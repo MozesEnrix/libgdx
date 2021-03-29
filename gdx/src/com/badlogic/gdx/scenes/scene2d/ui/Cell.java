@@ -68,7 +68,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** Returns the actor for this cell, or null. */
-	public @Null T getActor () {
+	@Null
+	public T getActor () {
 		return (T)actor;
 	}
 
@@ -246,7 +247,7 @@ public class Cell<T extends Actor> implements Poolable {
 		return this;
 	}
 
-	/** Sets the maxWidth and maxHeight to the specified value. If the max size is 0, no maximum size is used. */
+	/** Sets the maxWidth and maxHeight to the specified value. */
 	public Cell<T> maxSize (Value size) {
 		if (size == null) throw new IllegalArgumentException("size cannot be null.");
 		maxWidth = size;
@@ -254,7 +255,7 @@ public class Cell<T extends Actor> implements Poolable {
 		return this;
 	}
 
-	/** Sets the maxWidth and maxHeight to the specified values. If the max size is 0, no maximum size is used. */
+	/** Sets the maxWidth and maxHeight to the specified values. */
 	public Cell<T> maxSize (Value width, Value height) {
 		if (width == null) throw new IllegalArgumentException("width cannot be null.");
 		if (height == null) throw new IllegalArgumentException("height cannot be null.");
@@ -263,39 +264,35 @@ public class Cell<T extends Actor> implements Poolable {
 		return this;
 	}
 
-	/** If the maxWidth is 0, no maximum width is used. */
 	public Cell<T> maxWidth (Value maxWidth) {
 		if (maxWidth == null) throw new IllegalArgumentException("maxWidth cannot be null.");
 		this.maxWidth = maxWidth;
 		return this;
 	}
 
-	/** If the maxHeight is 0, no maximum height is used. */
 	public Cell<T> maxHeight (Value maxHeight) {
 		if (maxHeight == null) throw new IllegalArgumentException("maxHeight cannot be null.");
 		this.maxHeight = maxHeight;
 		return this;
 	}
 
-	/** Sets the maxWidth and maxHeight to the specified value. If the max size is 0, no maximum size is used. */
+	/** Sets the maxWidth and maxHeight to the specified value. */
 	public Cell<T> maxSize (float size) {
 		maxSize(Fixed.valueOf(size));
 		return this;
 	}
 
-	/** Sets the maxWidth and maxHeight to the specified values. If the max size is 0, no maximum size is used. */
+	/** Sets the maxWidth and maxHeight to the specified values. */
 	public Cell<T> maxSize (float width, float height) {
 		maxSize(Fixed.valueOf(width), Fixed.valueOf(height));
 		return this;
 	}
 
-	/** If the maxWidth is 0, no maximum width is used. */
 	public Cell<T> maxWidth (float maxWidth) {
 		this.maxWidth = Fixed.valueOf(maxWidth);
 		return this;
 	}
 
-	/** If the maxHeight is 0, no maximum height is used. */
 	public Cell<T> maxHeight (float maxHeight) {
 		this.maxHeight = Fixed.valueOf(maxHeight);
 		return this;
@@ -347,14 +344,13 @@ public class Cell<T extends Actor> implements Poolable {
 		return this;
 	}
 
-	/** Sets the spaceTop, spaceLeft, spaceBottom, and spaceRight to the specified value. The space cannot be < 0. */
+	/** Sets the spaceTop, spaceLeft, spaceBottom, and spaceRight to the specified value. */
 	public Cell<T> space (float space) {
 		if (space < 0) throw new IllegalArgumentException("space cannot be < 0: " + space);
 		space(Fixed.valueOf(space));
 		return this;
 	}
 
-	/** The space cannot be < 0. */
 	public Cell<T> space (float top, float left, float bottom, float right) {
 		if (top < 0) throw new IllegalArgumentException("top cannot be < 0: " + top);
 		if (left < 0) throw new IllegalArgumentException("left cannot be < 0: " + left);
@@ -364,28 +360,24 @@ public class Cell<T extends Actor> implements Poolable {
 		return this;
 	}
 
-	/** The space cannot be < 0. */
 	public Cell<T> spaceTop (float spaceTop) {
 		if (spaceTop < 0) throw new IllegalArgumentException("spaceTop cannot be < 0: " + spaceTop);
 		this.spaceTop = Fixed.valueOf(spaceTop);
 		return this;
 	}
 
-	/** The space cannot be < 0. */
 	public Cell<T> spaceLeft (float spaceLeft) {
 		if (spaceLeft < 0) throw new IllegalArgumentException("spaceLeft cannot be < 0: " + spaceLeft);
 		this.spaceLeft = Fixed.valueOf(spaceLeft);
 		return this;
 	}
 
-	/** The space cannot be < 0. */
 	public Cell<T> spaceBottom (float spaceBottom) {
 		if (spaceBottom < 0) throw new IllegalArgumentException("spaceBottom cannot be < 0: " + spaceBottom);
 		this.spaceBottom = Fixed.valueOf(spaceBottom);
 		return this;
 	}
 
-	/** The space cannot be < 0. */
 	public Cell<T> spaceRight (float spaceRight) {
 		if (spaceRight < 0) throw new IllegalArgumentException("spaceRight cannot be < 0: " + spaceRight);
 		this.spaceRight = Fixed.valueOf(spaceRight);
@@ -696,7 +688,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this cell is row defaults. */
-	public @Null Value getMinWidthValue () {
+	@Null
+	public Value getMinWidthValue () {
 		return minWidth;
 	}
 
@@ -705,7 +698,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this cell is row defaults. */
-	public @Null Value getMinHeightValue () {
+	@Null
+	public Value getMinHeightValue () {
 		return minHeight;
 	}
 
@@ -714,7 +708,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this cell is row defaults. */
-	public @Null Value getPrefWidthValue () {
+	@Null
+	public Value getPrefWidthValue () {
 		return prefWidth;
 	}
 
@@ -723,7 +718,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this cell is row defaults. */
-	public @Null Value getPrefHeightValue () {
+	@Null
+	public Value getPrefHeightValue () {
 		return prefHeight;
 	}
 
@@ -732,7 +728,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this cell is row defaults. */
-	public @Null Value getMaxWidthValue () {
+	@Null
+	public Value getMaxWidthValue () {
 		return maxWidth;
 	}
 
@@ -741,7 +738,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this cell is row defaults. */
-	public @Null Value getMaxHeightValue () {
+	@Null
+	public Value getMaxHeightValue () {
 		return maxHeight;
 	}
 
@@ -750,7 +748,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this value is not set. */
-	public @Null Value getSpaceTopValue () {
+	@Null
+	public Value getSpaceTopValue () {
 		return spaceTop;
 	}
 
@@ -759,7 +758,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this value is not set. */
-	public @Null Value getSpaceLeftValue () {
+	@Null
+	public Value getSpaceLeftValue () {
 		return spaceLeft;
 	}
 
@@ -768,7 +768,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this value is not set. */
-	public @Null Value getSpaceBottomValue () {
+	@Null
+	public Value getSpaceBottomValue () {
 		return spaceBottom;
 	}
 
@@ -777,7 +778,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this value is not set. */
-	public @Null Value getSpaceRightValue () {
+	@Null
+	public Value getSpaceRightValue () {
 		return spaceRight;
 	}
 
@@ -786,7 +788,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this value is not set. */
-	public @Null Value getPadTopValue () {
+	@Null
+	public Value getPadTopValue () {
 		return padTop;
 	}
 
@@ -795,7 +798,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this value is not set. */
-	public @Null Value getPadLeftValue () {
+	@Null
+	public Value getPadLeftValue () {
 		return padLeft;
 	}
 
@@ -804,7 +808,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this value is not set. */
-	public @Null Value getPadBottomValue () {
+	@Null
+	public Value getPadBottomValue () {
 		return padBottom;
 	}
 
@@ -813,7 +818,8 @@ public class Cell<T extends Actor> implements Poolable {
 	}
 
 	/** @return May be null if this value is not set. */
-	public @Null Value getPadRightValue () {
+	@Null
+	public Value getPadRightValue () {
 		return padRight;
 	}
 
@@ -956,6 +962,7 @@ public class Cell<T extends Actor> implements Poolable {
 		uniformY = cell.uniformY;
 	}
 
+	/** @param cell May be null. */
 	void merge (@Null Cell cell) {
 		if (cell == null) return;
 		if (cell.minWidth != null) minWidth = cell.minWidth;

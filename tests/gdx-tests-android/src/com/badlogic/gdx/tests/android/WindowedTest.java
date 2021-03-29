@@ -16,6 +16,8 @@
 
 package com.badlogic.gdx.tests.android;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,9 +28,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class WindowedTest extends AndroidApplication implements ApplicationListener {
 	Color color = new Color(1, 1, 1, 1);
@@ -87,7 +89,9 @@ public class WindowedTest extends AndroidApplication implements ApplicationListe
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(color);
+		Gdx.gl.glClearColor(color.r, color.g, color.g, color.a);
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
 	}
 
 	@Override

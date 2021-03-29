@@ -48,7 +48,7 @@ public class Label extends Widget {
 	private boolean prefSizeInvalid = true;
 	private float fontScaleX = 1, fontScaleY = 1;
 	private boolean fontScaleChanged = false;
-	private @Null String ellipsis;
+	@Null private String ellipsis;
 
 	public Label (@Null CharSequence text, Skin skin) {
 		this(text, skin.get(LabelStyle.class));
@@ -80,7 +80,6 @@ public class Label extends Widget {
 		if (style == null) throw new IllegalArgumentException("style cannot be null.");
 		if (style.font == null) throw new IllegalArgumentException("Missing LabelStyle font.");
 		this.style = style;
-
 		cache = style.font.newFontCache();
 		invalidateHierarchy();
 	}
@@ -96,25 +95,21 @@ public class Label extends Widget {
 	 * @return true if the text was changed. */
 	public boolean setText (int value) {
 		if (this.intValue == value) return false;
-		text.clear();
-		text.append(value);
+		setText(Integer.toString(value));
 		intValue = value;
-		invalidateHierarchy();
 		return true;
 	}
 
-	/** @param newText If null, "" will be used. */
+	/** @param newText May be null, "" will be used. */
 	public void setText (@Null CharSequence newText) {
-		if (newText == null) {
-			if (text.length == 0) return;
-			text.clear();
-		} else if (newText instanceof StringBuilder) {
+		if (newText == null) newText = "";
+		if (newText instanceof StringBuilder) {
 			if (text.equals(newText)) return;
-			text.clear();
+			text.setLength(0);
 			text.append((StringBuilder)newText);
 		} else {
 			if (textEquals(newText)) return;
-			text.clear();
+			text.setLength(0);
 			text.append(newText);
 		}
 		intValue = Integer.MIN_VALUE;
@@ -277,10 +272,6 @@ public class Label extends Widget {
 		invalidateHierarchy();
 	}
 
-	public boolean getWrap () {
-		return wrap;
-	}
-
 	public int getLabelAlign () {
 		return labelAlign;
 	}
@@ -372,8 +363,10 @@ public class Label extends Widget {
 	 * @author Nathan Sweet */
 	static public class LabelStyle {
 		public BitmapFont font;
-		public @Null Color fontColor;
-		public @Null Drawable background;
+		/** Optional. */
+		@Null public Color fontColor;
+		/** Optional. */
+		@Null public Drawable background;
 
 		public LabelStyle () {
 		}
@@ -384,7 +377,7 @@ public class Label extends Widget {
 		}
 
 		public LabelStyle (LabelStyle style) {
-			font = style.font;
+			this.font = style.font;
 			if (style.fontColor != null) fontColor = new Color(style.fontColor);
 			background = style.background;
 		}

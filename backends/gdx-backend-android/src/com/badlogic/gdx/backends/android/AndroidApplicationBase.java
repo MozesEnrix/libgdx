@@ -24,6 +24,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.badlogic.gdx.Application;
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Audio;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.SnapshotArray;
@@ -35,7 +38,7 @@ import com.badlogic.gdx.utils.SnapshotArray;
  * @author davebaol */
 public interface AndroidApplicationBase extends Application {
 
-	static final int MINIMUM_SDK = 14;
+	static final int MINIMUM_SDK = 9;
 
 	/** The application or activity context
 	 * 
@@ -63,7 +66,7 @@ public interface AndroidApplicationBase extends Application {
 	void startActivity (Intent intent);
 
 	/** Returns the {@link AndroidInput} object associated with this {@link AndroidApplicationBase}
-	 *
+	 * 
 	 * @return the {@link AndroidInput} object */
 	@Override
 	AndroidInput getInput ();
@@ -88,13 +91,4 @@ public interface AndroidApplicationBase extends Application {
 	/** Returns the Handler object created by the application
 	 * @return The {@link Handler} object created by the application */
 	Handler getHandler ();
-
-	/** Returns the AndroidAudio to be used by the application
-	 * @return the created {@link AndroidAudio} */
-	AndroidAudio createAudio (Context context, AndroidApplicationConfiguration config);
-
-	/** Returns the AndroidInput to be used by the application
-	 * @return the created {@link AndroidInput} */
-	AndroidInput createInput (Application activity, Context context, Object view,
-		AndroidApplicationConfiguration config);
 }

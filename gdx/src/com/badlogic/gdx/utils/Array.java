@@ -146,9 +146,9 @@ public class Array<T> implements Iterable<T> {
 	public void addAll (T[] array, int start, int count) {
 		T[] items = this.items;
 		int sizeNeeded = size + count;
-		if (sizeNeeded > items.length) items = resize(Math.max(Math.max(8, sizeNeeded), (int)(size * 1.75f)));
+		if (sizeNeeded > items.length) items = resize(Math.max(8, (int)(sizeNeeded * 1.75f)));
 		System.arraycopy(array, start, items, size, count);
-		size = sizeNeeded;
+		size += count;
 	}
 
 	public T get (int index) {
@@ -171,16 +171,6 @@ public class Array<T> implements Iterable<T> {
 			items[size] = items[index];
 		size++;
 		items[index] = value;
-	}
-
-	/** Inserts the specified number of items at the specified index. The new items will have values equal to the values at those
-	 * indices before the insertion. */
-	public void insertRange (int index, int count) {
-		if (index > size) throw new IndexOutOfBoundsException("index can't be > size: " + index + " > " + size);
-		int sizeNeeded = size + count;
-		if (sizeNeeded > items.length) items = resize(Math.max(Math.max(8, sizeNeeded), (int)(size * 1.75f)));
-		System.arraycopy(items, index, items, index + count, size - index);
-		size = sizeNeeded;
 	}
 
 	public void swap (int first, int second) {
@@ -382,7 +372,7 @@ public class Array<T> implements Iterable<T> {
 	}
 
 	public void clear () {
-		Arrays.fill(items, 0, size, null);
+		Arrays.fill(items, null);
 		size = 0;
 	}
 
@@ -400,7 +390,7 @@ public class Array<T> implements Iterable<T> {
 	public T[] ensureCapacity (int additionalCapacity) {
 		if (additionalCapacity < 0) throw new IllegalArgumentException("additionalCapacity must be >= 0: " + additionalCapacity);
 		int sizeNeeded = size + additionalCapacity;
-		if (sizeNeeded > items.length) resize(Math.max(Math.max(8, sizeNeeded), (int)(size * 1.75f)));
+		if (sizeNeeded > items.length) resize(Math.max(8, sizeNeeded));
 		return items;
 	}
 
@@ -494,7 +484,7 @@ public class Array<T> implements Iterable<T> {
 	 * If {@link Collections#allocateIterators} is false, the same iterable instance is returned each time this method is called.
 	 * Use the {@link Predicate.PredicateIterable} constructor for nested or multithreaded iteration. */
 	public Iterable<T> select (Predicate<T> predicate) {
-		if (Collections.allocateIterators) return new Predicate.PredicateIterable<T>(this, predicate);
+		if (Collections.allocateIterators) new Predicate.PredicateIterable<T>(this, predicate);
 		if (predicateIterable == null)
 			predicateIterable = new Predicate.PredicateIterable<T>(this, predicate);
 		else
@@ -513,7 +503,8 @@ public class Array<T> implements Iterable<T> {
 	}
 
 	/** Returns a random item from the array, or null if the array is empty. */
-	public @Null T random () {
+	@Null
+	public T random () {
 		if (size == 0) return null;
 		return items[MathUtils.random(0, size - 1)];
 	}

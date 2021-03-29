@@ -152,7 +152,8 @@ public class Image extends Widget {
 	}
 
 	/** @return May be null. */
-	public @Null Drawable getDrawable () {
+	@Null
+	public Drawable getDrawable () {
 		return drawable;
 	}
 
@@ -165,10 +166,6 @@ public class Image extends Widget {
 	public void setAlign (int align) {
 		this.align = align;
 		invalidate();
-	}
-
-	public int getAlign () {
-		return align;
 	}
 
 	public float getMinWidth () {

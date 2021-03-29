@@ -18,14 +18,14 @@ import com.badlogic.gdx.utils.Null;
  * {@link Table} with a single cell but is more lightweight.
  * @author Nathan Sweet */
 public class Container<T extends Actor> extends WidgetGroup {
-	private @Null T actor;
+	@Null private T actor;
 	private Value minWidth = Value.minWidth, minHeight = Value.minHeight;
 	private Value prefWidth = Value.prefWidth, prefHeight = Value.prefHeight;
 	private Value maxWidth = Value.zero, maxHeight = Value.zero;
 	private Value padTop = Value.zero, padLeft = Value.zero, padBottom = Value.zero, padRight = Value.zero;
 	private float fillX, fillY;
 	private int align;
-	private @Null Drawable background;
+	@Null private Drawable background;
 	private boolean clip;
 	private boolean round = true;
 
@@ -100,7 +100,8 @@ public class Container<T extends Actor> extends WidgetGroup {
 		return this;
 	}
 
-	public @Null Drawable getBackground () {
+	@Null
+	public Drawable getBackground () {
 		return background;
 	}
 
@@ -168,34 +169,31 @@ public class Container<T extends Actor> extends WidgetGroup {
 	}
 
 	/** @return May be null. */
-	public @Null T getActor () {
+	@Null
+	public T getActor () {
 		return actor;
 	}
 
 	/** @deprecated Container may have only a single child.
 	 * @see #setActor(Actor) */
-	@Deprecated
 	public void addActor (Actor actor) {
 		throw new UnsupportedOperationException("Use Container#setActor.");
 	}
 
 	/** @deprecated Container may have only a single child.
 	 * @see #setActor(Actor) */
-	@Deprecated
 	public void addActorAt (int index, Actor actor) {
 		throw new UnsupportedOperationException("Use Container#setActor.");
 	}
 
 	/** @deprecated Container may have only a single child.
 	 * @see #setActor(Actor) */
-	@Deprecated
 	public void addActorBefore (Actor actorBefore, Actor actor) {
 		throw new UnsupportedOperationException("Use Container#setActor.");
 	}
 
 	/** @deprecated Container may have only a single child.
 	 * @see #setActor(Actor) */
-	@Deprecated
 	public void addActorAfter (Actor actorAfter, Actor actor) {
 		throw new UnsupportedOperationException("Use Container#setActor.");
 	}
@@ -715,17 +713,6 @@ public class Container<T extends Actor> extends WidgetGroup {
 		this.round = round;
 	}
 
-	/** Sets clip to true. */
-	public Container<T> clip () {
-		setClip(true);
-		return this;
-	}
-
-	public Container<T> clip (boolean enabled) {
-		setClip(enabled);
-		return this;
-	}
-
 	/** Causes the contents to be clipped if they exceed the container bounds. Enabling clipping will set
 	 * {@link #setTransform(boolean)} to true. */
 	public void setClip (boolean enabled) {
@@ -738,7 +725,8 @@ public class Container<T extends Actor> extends WidgetGroup {
 		return clip;
 	}
 
-	public @Null Actor hit (float x, float y, boolean touchable) {
+	@Null
+	public Actor hit (float x, float y, boolean touchable) {
 		if (clip) {
 			if (touchable && getTouchable() == Touchable.disabled) return null;
 			if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) return null;

@@ -37,6 +37,7 @@ import static com.badlogic.gdx.graphics.g2d.Batch.Y2;
 import static com.badlogic.gdx.graphics.g2d.Batch.Y3;
 import static com.badlogic.gdx.graphics.g2d.Batch.Y4;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -50,6 +51,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;

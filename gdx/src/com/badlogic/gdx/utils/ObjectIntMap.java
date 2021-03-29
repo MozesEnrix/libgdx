@@ -16,11 +16,11 @@
 
 package com.badlogic.gdx.utils;
 
+import static com.badlogic.gdx.utils.ObjectSet.*;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import static com.badlogic.gdx.utils.ObjectSet.tableSize;
 
 /** An unordered map where the keys are objects and the values are unboxed ints. Null keys are not allowed. No allocation is done
  * except when growing the table size.
@@ -62,9 +62,9 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 	 * hash. */
 	protected int mask;
 
-	transient Entries entries1, entries2;
-	transient Values values1, values2;
-	transient Keys keys1, keys2;
+	Entries entries1, entries2;
+	Values values1, values2;
+	Keys keys1, keys2;
 
 	/** Creates a new map with an initial capacity of 51 and a load factor of 0.8. */
 	public ObjectIntMap () {
@@ -132,6 +132,7 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 		}
 	}
 
+	/** Doesn't return a value, unlike other maps. */
 	public void put (K key, int value) {
 		int i = locateKey(key);
 		if (i >= 0) { // Existing key was found.
@@ -142,21 +143,6 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 		keyTable[i] = key;
 		valueTable[i] = value;
 		if (++size >= threshold) resize(keyTable.length << 1);
-	}
-
-	/** Returns the old value associated with the specified key, or the specified default value. */
-	public int put (K key, int value, int defaultValue) {
-		int i = locateKey(key);
-		if (i >= 0) { // Existing key was found.
-			int oldValue = valueTable[i];
-			valueTable[i] = value;
-			return oldValue;
-		}
-		i = -(i + 1); // Empty space was found.
-		keyTable[i] = key;
-		valueTable[i] = value;
-		if (++size >= threshold) resize(keyTable.length << 1);
-		return defaultValue;
 	}
 
 	public void putAll (ObjectIntMap<? extends K> map) {
@@ -204,21 +190,17 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 		return defaultValue;
 	}
 
-	/** Returns the value for the removed key, or the default value if the key is not in the map. */
 	public int remove (K key, int defaultValue) {
 		int i = locateKey(key);
 		if (i < 0) return defaultValue;
 		K[] keyTable = this.keyTable;
 		int[] valueTable = this.valueTable;
 		int oldValue = valueTable[i];
-		int mask = this.mask, next = i + 1 & mask;
-		while ((key = keyTable[next]) != null) {
-			int placement = place(key);
-			if ((next - placement & mask) > (i - placement & mask)) {
-				keyTable[i] = key;
-				valueTable[i] = valueTable[next];
-				i = next;
-			}
+		int next = i + 1 & mask;
+		while ((key = keyTable[next]) != null && next != place(key)) {
+			keyTable[i] = key;
+			valueTable[i] = valueTable[next];
+			i = next;
 			next = next + 1 & mask;
 		}
 		keyTable[i] = null;
@@ -267,7 +249,7 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 	public boolean containsValue (int value) {
 		K[] keyTable = this.keyTable;
 		int[] valueTable = this.valueTable;
-		for (int i = valueTable.length - 1; i >= 0; i--)
+		for (int i = valueTable.length - 1; i > 0; i--)
 			if (keyTable[i] != null && valueTable[i] == value) return true;
 		return false;
 	}
@@ -278,10 +260,11 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 
 	/** Returns the key for the specified value, or null if it is not in the map. Note this traverses the entire map and compares
 	 * every value, which may be an expensive operation. */
-	public @Null K findKey (int value) {
+	@Null
+	public K findKey (int value) {
 		K[] keyTable = this.keyTable;
 		int[] valueTable = this.valueTable;
-		for (int i = valueTable.length - 1; i >= 0; i--) {
+		for (int i = valueTable.length - 1; i > 0; i--) {
 			K key = keyTable[i];
 			if (key != null && valueTable[i] == value) return key;
 		}
@@ -383,12 +366,9 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 		return entries();
 	}
 
-	/** Returns an iterator for the entries in the map. Remove is supported.
-	 * <p>
-	 * If {@link Collections#allocateIterators} is false, the same iterator instance is returned each time this method is called.
-	 * Use the {@link Entries} constructor for nested or multithreaded iteration. */
+	/** Returns an iterator for the entries in the map. Remove is supported. Note that the same iterator instance is returned each
+	 * time this method is called. Use the {@link Entries} constructor for nested or multithreaded iteration. */
 	public Entries<K> entries () {
-		if (Collections.allocateIterators) return new Entries(this);
 		if (entries1 == null) {
 			entries1 = new Entries(this);
 			entries2 = new Entries(this);
@@ -405,12 +385,9 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 		return entries2;
 	}
 
-	/** Returns an iterator for the values in the map. Remove is supported.
-	 * <p>
-	 * If {@link Collections#allocateIterators} is false, the same iterator instance is returned each time this method is called.
-	 * Use the {@link Values} constructor for nested or multithreaded iteration. */
+	/** Returns an iterator for the values in the map. Remove is supported. Note that the same iterator instance is returned each
+	 * time this method is called. Use the {@link Values} constructor for nested or multithreaded iteration. */
 	public Values values () {
-		if (Collections.allocateIterators) return new Values(this);
 		if (values1 == null) {
 			values1 = new Values(this);
 			values2 = new Values(this);
@@ -427,12 +404,9 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 		return values2;
 	}
 
-	/** Returns an iterator for the keys in the map. Remove is supported.
-	 * <p>
-	 * If {@link Collections#allocateIterators} is false, the same iterator instance is returned each time this method is called.
-	 * Use the {@link Keys} constructor for nested or multithreaded iteration. */
+	/** Returns an iterator for the keys in the map. Remove is supported. Note that the same iterator instance is returned each
+	 * time this method is called. Use the {@link Keys} constructor for nested or multithreaded iteration. */
 	public Keys<K> keys () {
-		if (Collections.allocateIterators) return new Keys(this);
 		if (keys1 == null) {
 			keys1 = new Keys(this);
 			keys2 = new Keys(this);
@@ -494,13 +468,10 @@ public class ObjectIntMap<K> implements Iterable<ObjectIntMap.Entry<K>> {
 			int[] valueTable = map.valueTable;
 			int mask = map.mask, next = i + 1 & mask;
 			K key;
-			while ((key = keyTable[next]) != null) {
-				int placement = map.place(key);
-				if ((next - placement & mask) > (i - placement & mask)) {
-					keyTable[i] = key;
-					valueTable[i] = valueTable[next];
-					i = next;
-				}
+			while ((key = keyTable[next]) != null && next != map.place(key)) {
+				keyTable[i] = key;
+				valueTable[i] = valueTable[next];
+				i = next;
 				next = next + 1 & mask;
 			}
 			keyTable[i] = null;

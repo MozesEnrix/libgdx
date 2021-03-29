@@ -40,9 +40,9 @@ public class JsonReader implements BaseJsonReader {
 	}
 
 	public JsonValue parse (Reader reader) {
-		char[] data = new char[1024];
-		int offset = 0;
 		try {
+			char[] data = new char[1024];
+			int offset = 0;
 			while (true) {
 				int length = reader.read(data, offset, data.length - offset);
 				if (length == -1) break;
@@ -53,33 +53,27 @@ public class JsonReader implements BaseJsonReader {
 				} else
 					offset += length;
 			}
+			return parse(data, 0, offset);
 		} catch (IOException ex) {
-			throw new SerializationException("Error reading input.", ex);
+			throw new SerializationException(ex);
 		} finally {
 			StreamUtils.closeQuietly(reader);
 		}
-		return parse(data, 0, offset);
 	}
 
 	public JsonValue parse (InputStream input) {
-		Reader reader;
 		try {
-			reader = new InputStreamReader(input, "UTF-8");
-		} catch (Exception ex) {
-			throw new SerializationException("Error reading stream.", ex);
+			return parse(new InputStreamReader(input, "UTF-8"));
+		} catch (IOException ex) {
+			throw new SerializationException(ex);
+		} finally {
+			StreamUtils.closeQuietly(input);
 		}
-		return parse(reader);
 	}
 
 	public JsonValue parse (FileHandle file) {
-		Reader reader;
 		try {
-			reader = file.reader("UTF-8");
-		} catch (Exception ex) {
-			throw new SerializationException("Error reading file: " + file, ex);
-		}
-		try {
-			return parse(reader);
+			return parse(file.reader("UTF-8"));
 		} catch (Exception ex) {
 			throw new SerializationException("Error parsing file: " + file, ex);
 		}
@@ -184,13 +178,13 @@ public class JsonReader implements BaseJsonReader {
 							while (_nacts-- > 0) {
 								switch (_json_actions[_acts++]) {
 								case 0:
-								// line 110 "JsonReader.rl"
+								// line 104 "JsonReader.rl"
 								{
 									stringIsName = true;
 								}
 									break;
 								case 1:
-								// line 113 "JsonReader.rl"
+								// line 107 "JsonReader.rl"
 								{
 									String value = new String(data, s, p - s);
 									if (needsUnescape) value = unescape(value);
@@ -267,7 +261,7 @@ public class JsonReader implements BaseJsonReader {
 								}
 									break;
 								case 2:
-								// line 187 "JsonReader.rl"
+								// line 181 "JsonReader.rl"
 								{
 									String name = names.size > 0 ? names.pop() : null;
 									if (debug) System.out.println("startObject: " + name);
@@ -288,7 +282,7 @@ public class JsonReader implements BaseJsonReader {
 								}
 									break;
 								case 3:
-								// line 193 "JsonReader.rl"
+								// line 187 "JsonReader.rl"
 								{
 									if (debug) System.out.println("endObject");
 									pop();
@@ -300,7 +294,7 @@ public class JsonReader implements BaseJsonReader {
 								}
 									break;
 								case 4:
-								// line 198 "JsonReader.rl"
+								// line 192 "JsonReader.rl"
 								{
 									String name = names.size > 0 ? names.pop() : null;
 									if (debug) System.out.println("startArray: " + name);
@@ -321,7 +315,7 @@ public class JsonReader implements BaseJsonReader {
 								}
 									break;
 								case 5:
-								// line 204 "JsonReader.rl"
+								// line 198 "JsonReader.rl"
 								{
 									if (debug) System.out.println("endArray");
 									pop();
@@ -333,7 +327,7 @@ public class JsonReader implements BaseJsonReader {
 								}
 									break;
 								case 6:
-								// line 209 "JsonReader.rl"
+								// line 203 "JsonReader.rl"
 								{
 									int start = p - 1;
 									if (data[p++] == '/') {
@@ -349,7 +343,7 @@ public class JsonReader implements BaseJsonReader {
 								}
 									break;
 								case 7:
-								// line 222 "JsonReader.rl"
+								// line 216 "JsonReader.rl"
 								{
 									if (debug) System.out.println("unquotedChars");
 									s = p;
@@ -406,7 +400,7 @@ public class JsonReader implements BaseJsonReader {
 								}
 									break;
 								case 8:
-								// line 276 "JsonReader.rl"
+								// line 270 "JsonReader.rl"
 								{
 									if (debug) System.out.println("quotedChars");
 									s = ++p;
@@ -449,7 +443,7 @@ public class JsonReader implements BaseJsonReader {
 							while (__nacts-- > 0) {
 								switch (_json_actions[__acts++]) {
 								case 1:
-								// line 113 "JsonReader.rl"
+								// line 107 "JsonReader.rl"
 								{
 									String value = new String(data, s, p - s);
 									if (needsUnescape) value = unescape(value);
@@ -536,7 +530,7 @@ public class JsonReader implements BaseJsonReader {
 				}
 			}
 
-			// line 312 "JsonReader.rl"
+			// line 306 "JsonReader.rl"
 
 		} catch (RuntimeException ex) {
 			parseRuntimeEx = ex;
@@ -554,16 +548,16 @@ public class JsonReader implements BaseJsonReader {
 			int start = Math.max(0, p - 32);
 			throw new SerializationException("Error parsing JSON on line " + lineNumber + " near: "
 				+ new String(data, start, p - start) + "*ERROR*" + new String(data, p, Math.min(64, pe - p)), parseRuntimeEx);
-		}
-		if (elements.size != 0) {
+		} else if (elements.size != 0) {
 			JsonValue element = elements.peek();
 			elements.clear();
 			if (element != null && element.isObject())
 				throw new SerializationException("Error parsing JSON, unmatched brace.");
 			else
 				throw new SerializationException("Error parsing JSON, unmatched bracket.");
+		} else if (parseRuntimeEx != null) {
+			throw new SerializationException("Error parsing JSON: " + new String(data), parseRuntimeEx);
 		}
-		if (parseRuntimeEx != null) throw new SerializationException("Error parsing JSON: " + new String(data), parseRuntimeEx);
 		return root;
 	}
 
@@ -657,7 +651,7 @@ public class JsonReader implements BaseJsonReader {
 	static final int json_en_array = 23;
 	static final int json_en_main = 1;
 
-	// line 343 "JsonReader.rl"
+	// line 337 "JsonReader.rl"
 
 	private final Array<JsonValue> elements = new Array(8);
 	private final Array<JsonValue> lastChild = new Array(8);

@@ -73,6 +73,7 @@ import javax.swing.JTextPane;
 import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -83,7 +84,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import org.lwjgl.opengl.GL11;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -311,14 +311,9 @@ public class Hiero extends JFrame {
 		unicodeFont.setGlyphPageHeight(((Number)glyphPageHeightCombo.getSelectedItem()).intValue());
 		if (nativeRadio.isSelected())
 			unicodeFont.setRenderType(RenderType.Native);
-		else if (freeTypeRadio.isSelected()) {
-			try{
-				unicodeFont.setRenderType(RenderType.FreeType);
-			} catch (GdxRuntimeException ex) {
-				unicodeFont.setRenderType(RenderType.Java);
-				javaRadio.doClick();
-			}
-		} else
+		else if (freeTypeRadio.isSelected())
+			unicodeFont.setRenderType(RenderType.FreeType);
+		else
 			unicodeFont.setRenderType(RenderType.Java);
 
 		for (Iterator iter = effectPanels.iterator(); iter.hasNext();) {
@@ -441,7 +436,7 @@ public class Hiero extends JFrame {
 			public void valueChanged (ListSelectionEvent evt) {
 				if (evt.getValueIsAdjusting()) return;
 				prefs.put("system.font", (String)fontList.getSelectedValue());
-					updateFont();
+				updateFont();
 			}
 		});
 
@@ -831,7 +826,7 @@ public class Hiero extends JFrame {
 			buttonGroup.add(freeTypeRadio);
 			buttonGroup.add(javaRadio);
 			buttonGroup.add(nativeRadio);
-			javaRadio.setSelected(true);
+			freeTypeRadio.setSelected(true);
 		}
 		{
 			JPanel samplePanel = new JPanel();

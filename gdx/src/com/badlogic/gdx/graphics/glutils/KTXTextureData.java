@@ -3,7 +3,6 @@ package com.badlogic.gdx.graphics.glutils;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -26,9 +25,9 @@ import com.badlogic.gdx.utils.StreamUtils;
 /** A KTXTextureData holds the data from a KTX (or zipped KTX file, aka ZKTX). That is to say an OpenGL ready texture data. The KTX
  * file format is just a thin wrapper around OpenGL textures and therefore is compatible with most OpenGL texture capabilities
  * like texture compression, cubemapping, mipmapping, etc.
- *
+ * 
  * For example, KTXTextureData can be used for {@link Texture} or {@link Cubemap}.
- *
+ * 
  * @author Vincent Bousquet */
 public class KTXTextureData implements TextureData, CubemapData {
 
@@ -85,8 +84,8 @@ public class KTXTextureData implements TextureData, CubemapData {
 				int readBytes = 0;
 				while ((readBytes = in.read(buffer)) != -1)
 					compressedData.put(buffer, 0, readBytes);
-				((Buffer) compressedData).position(0);
-				((Buffer) compressedData).limit(compressedData.capacity());
+				compressedData.position(0);
+				compressedData.limit(compressedData.capacity());
 			} catch (Exception e) {
 				throw new GdxRuntimeException("Couldn't load zktx file '" + file + "'", e);
 			} finally {
@@ -135,8 +134,8 @@ public class KTXTextureData implements TextureData, CubemapData {
 				int faceLodSizeRounded = (faceLodSize + 3) & ~3;
 				pos += faceLodSizeRounded * numberOfFaces + 4;
 			}
-			((Buffer) compressedData).limit(pos);
-			((Buffer) compressedData).position(0);
+			compressedData.limit(pos);
+			compressedData.position(0);
 			ByteBuffer directBuffer = BufferUtils.newUnsafeByteBuffer(pos);
 			directBuffer.order(compressedData.order());
 			directBuffer.put(compressedData);
@@ -227,16 +226,16 @@ public class KTXTextureData implements TextureData, CubemapData {
 			int pixelWidth = Math.max(1, this.pixelWidth >> level);
 			int pixelHeight = Math.max(1, this.pixelHeight >> level);
 			int pixelDepth = Math.max(1, this.pixelDepth >> level);
-			((Buffer) compressedData).position(pos);
+			compressedData.position(pos);
 			int faceLodSize = compressedData.getInt();
 			int faceLodSizeRounded = (faceLodSize + 3) & ~3;
 			pos += 4;
 			for (int face = 0; face < numberOfFaces; face++) {
-				((Buffer) compressedData).position(pos);
+				compressedData.position(pos);
 				pos += faceLodSizeRounded;
 				if (singleFace != -1 && singleFace != face) continue;
 				ByteBuffer data = compressedData.slice();
-				((Buffer) data).limit(faceLodSizeRounded);
+				data.limit(faceLodSizeRounded);
 				if (textureDimensions == 1) {
 					// if (compressed)
 					// Gdx.gl.glCompressedTexImage1D(target + face, level, glInternalFormat, pixelWidth, 0, faceLodSize,
@@ -328,9 +327,9 @@ public class KTXTextureData implements TextureData, CubemapData {
 			if (level == requestedLevel) {
 				for (int face = 0; face < numberOfFaces; face++) {
 					if (face == requestedFace) {
-						((Buffer) compressedData).position(pos);
+						compressedData.position(pos);
 						ByteBuffer data = compressedData.slice();
-						((Buffer) data).limit(faceLodSizeRounded);
+						data.limit(faceLodSizeRounded);
 						return data;
 					}
 					pos += faceLodSizeRounded;

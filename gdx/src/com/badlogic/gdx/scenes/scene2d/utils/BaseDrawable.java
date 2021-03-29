@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 /** Drawable that stores the size information but doesn't draw anything.
  * @author Nathan Sweet */
 public class BaseDrawable implements Drawable {
-	private @Null String name;
+	@Null private String name;
 	private float leftWidth, rightWidth, topHeight, bottomHeight, minWidth, minHeight;
 
 	public BaseDrawable () {
@@ -98,12 +98,13 @@ public class BaseDrawable implements Drawable {
 		this.minHeight = minHeight;
 	}
 
-	public void setMinSize (float minWidth, float minHeight) {
-		setMinWidth(minWidth);
-		setMinHeight(minHeight);
-	}
+    public void setMinSize (float minWidth, float minHeight) {
+        setMinWidth(minWidth);
+        setMinHeight(minHeight);
+    }
 
-	public @Null String getName () {
+	@Null
+	public String getName () {
 		return name;
 	}
 
@@ -111,7 +112,8 @@ public class BaseDrawable implements Drawable {
 		this.name = name;
 	}
 
-	public @Null String toString () {
+	@Null
+	public String toString () {
 		if (name == null) return ClassReflection.getSimpleName(getClass());
 		return name;
 	}

@@ -30,12 +30,6 @@ import com.badlogic.gdx.utils.Clipboard;
  * @author mzechner */
 public class LwjglClipboard implements Clipboard, ClipboardOwner {
 	@Override
-	public boolean hasContents () {
-		String contents = getContents();
-		return contents != null && !contents.isEmpty();
-	}
-
-	@Override
 	public String getContents () {
 		try {
 			java.awt.datatransfer.Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -44,7 +38,7 @@ public class LwjglClipboard implements Clipboard, ClipboardOwner {
 				if (contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 					try {
 						return (String)contents.getTransferData(DataFlavor.stringFlavor);
-					} catch (Throwable ex) {
+					} catch (Exception ex) {
 					}
 				}
 				if (contents.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
@@ -60,7 +54,7 @@ public class LwjglClipboard implements Clipboard, ClipboardOwner {
 					}
 				}
 			}
-		} catch (Throwable ignored) { // Ignore JDK crashes sorting data flavors.
+		} catch (Exception ignored) { // Ignore JDK crashes sorting data flavors.
 		}
 		return "";
 	}
@@ -71,7 +65,7 @@ public class LwjglClipboard implements Clipboard, ClipboardOwner {
 			StringSelection stringSelection = new StringSelection(content);
 			java.awt.datatransfer.Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 			clipboard.setContents(stringSelection, this);
-		} catch (Throwable ignored) { // Ignore JDK crashes sorting data flavors.
+		} catch (Exception ignored) { // Ignore JDK crashes sorting data flavors.
 		}
 	}
 

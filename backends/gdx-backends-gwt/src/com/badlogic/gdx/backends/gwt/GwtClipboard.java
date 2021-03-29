@@ -24,15 +24,9 @@ public class GwtClipboard implements Clipboard {
 	private boolean requestedWritePermissions = false;
 	private boolean hasWritePermissions = true;
 
-	private final ClipboardWriteHandler writeHandler = new ClipboardWriteHandler();
+	private ClipboardWriteHandler writeHandler = new ClipboardWriteHandler();
 
 	private String content = "";
-
-	@Override
-	public boolean hasContents () {
-		String contents = getContents();
-		return contents != null && !contents.isEmpty();
-	}
 
 	@Override
 	public String getContents () {

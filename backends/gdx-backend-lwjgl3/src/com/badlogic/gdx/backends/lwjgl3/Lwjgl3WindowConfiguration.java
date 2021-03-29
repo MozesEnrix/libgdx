@@ -34,7 +34,7 @@ public class Lwjgl3WindowConfiguration {
 	boolean windowDecorated = true;
 	boolean windowMaximized = false;
 	Lwjgl3Graphics.Lwjgl3Monitor maximizedMonitor;
-	boolean autoIconify = true;
+	boolean autoIconify = false;
 	FileType windowIconFileType;
 	String[] windowIconPaths;
 	Lwjgl3WindowListener windowListener;
@@ -126,8 +126,8 @@ public class Lwjgl3WindowConfiguration {
 	}
 
 	/**
-	 * Sets the position of the window in windowed mode.
-	 * Default -1 for both coordinates for centered on primary monitor.
+	 * Sets the position of the window in windowed mode on the
+	 * primary monitor. Default -1 for both coordinates for centered.
 	 */
 	public void setWindowPosition(int x, int y) {
 		windowX = x;

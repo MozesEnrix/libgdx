@@ -72,8 +72,8 @@ public class InstanceBufferObjectSubData implements InstanceData {
 		usage = isStatic ? GL20.GL_STATIC_DRAW : GL20.GL_DYNAMIC_DRAW;
 		buffer = byteBuffer.asFloatBuffer();
 		bufferHandle = createBufferObject();
-		((Buffer) buffer).flip();
-		((Buffer) byteBuffer).flip();
+		buffer.flip();
+		byteBuffer.flip();
 	}
 
 	private int createBufferObject () {
@@ -128,14 +128,14 @@ public class InstanceBufferObjectSubData implements InstanceData {
 		isDirty = true;
 		if (isDirect) {
 			BufferUtils.copy(data, byteBuffer, count, offset);
-			((Buffer) buffer).position(0);
-			((Buffer) buffer).limit(count);
+			buffer.position(0);
+			buffer.limit(count);
 		} else {
-			((Buffer) buffer).clear();
+			buffer.clear();
 			buffer.put(data, offset, count);
-			((Buffer) buffer).flip();
-			((Buffer) byteBuffer).position(0);
-			((Buffer) byteBuffer).limit(buffer.limit() << 2);
+			buffer.flip();
+			byteBuffer.position(0);
+			byteBuffer.limit(buffer.limit() << 2);
 		}
 
 		bufferChanged();
@@ -146,14 +146,14 @@ public class InstanceBufferObjectSubData implements InstanceData {
 		isDirty = true;
 		if (isDirect) {
 			BufferUtils.copy(data, byteBuffer, count);
-			((Buffer) buffer).position(0);
-			((Buffer) buffer).limit(count);
+			buffer.position(0);
+			buffer.limit(count);
 		} else {
-			((Buffer) buffer).clear();
+			buffer.clear();
 			buffer.put(data);
-			((Buffer) buffer).flip();
-			((Buffer) byteBuffer).position(0);
-			((Buffer) byteBuffer).limit(buffer.limit() << 2);
+			buffer.flip();
+			byteBuffer.position(0);
+			byteBuffer.limit(buffer.limit() << 2);
 		}
 
 		bufferChanged();
@@ -164,9 +164,9 @@ public class InstanceBufferObjectSubData implements InstanceData {
 		isDirty = true;
 		if (isDirect) {
 			final int pos = byteBuffer.position();
-			((Buffer) byteBuffer).position(targetOffset * 4);
+			byteBuffer.position(targetOffset * 4);
 			BufferUtils.copy(data, sourceOffset, count, byteBuffer);
-			((Buffer) byteBuffer).position(pos);
+			byteBuffer.position(pos);
 		} else
 			throw new GdxRuntimeException("Buffer must be allocated direct."); // Should never happen
 
@@ -178,10 +178,10 @@ public class InstanceBufferObjectSubData implements InstanceData {
 		isDirty = true;
 		if (isDirect) {
 			final int pos = byteBuffer.position();
-			((Buffer) byteBuffer).position(targetOffset * 4);
-			((Buffer) data).position(sourceOffset * 4);
+			byteBuffer.position(targetOffset * 4);
+			data.position(sourceOffset * 4);
 			BufferUtils.copy(data, byteBuffer, count);
-			((Buffer) byteBuffer).position(pos);
+			byteBuffer.position(pos);
 		} else
 			throw new GdxRuntimeException("Buffer must be allocated direct."); // Should never happen
 
@@ -204,7 +204,7 @@ public class InstanceBufferObjectSubData implements InstanceData {
 
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
 		if (isDirty) {
-			((Buffer) byteBuffer).limit(buffer.limit() * 4);
+			byteBuffer.limit(buffer.limit() * 4);
 			gl.glBufferData(GL20.GL_ARRAY_BUFFER, byteBuffer.limit(), byteBuffer, usage);
 			isDirty = false;
 		}

@@ -96,11 +96,13 @@ public class ShaderMultitextureTest extends GdxTest {
 		Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
 		texture2.bind();
 
-		shader.bind();
+		shader.begin();
 		shader.setUniformi("s_texture", 0);
 		shader.setUniformi("s_texture2", 1);
 
 		mesh.render(shader, GL20.GL_TRIANGLES);
+
+		shader.end();
 	}
 
 	@Override

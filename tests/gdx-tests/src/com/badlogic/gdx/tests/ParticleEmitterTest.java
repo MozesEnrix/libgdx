@@ -116,7 +116,7 @@ public class ParticleEmitterTest extends GdxTest {
 			}
 
 			@Override
-			public boolean scrolled (float amountX, float amountY) {
+			public boolean scrolled (int amount) {
 				return false;
 			}
 		};

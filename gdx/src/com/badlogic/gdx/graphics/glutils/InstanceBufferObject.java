@@ -55,7 +55,7 @@ public class InstanceBufferObject implements InstanceData {
 		bufferHandle = Gdx.gl20.glGenBuffer();
 
 		ByteBuffer data = BufferUtils.newUnsafeByteBuffer(instanceAttributes.vertexSize * numVertices);
-		((Buffer) data).limit(0);
+		data.limit(0);
 		setBuffer(data, true, instanceAttributes);
 		setUsage(isStatic ? GL20.GL_STATIC_DRAW : GL20.GL_DYNAMIC_DRAW);
 	}
@@ -101,10 +101,10 @@ public class InstanceBufferObject implements InstanceData {
 		this.ownsBuffer = ownsBuffer;
 
 		final int l = byteBuffer.limit();
-		((Buffer) byteBuffer).limit(byteBuffer.capacity());
+		byteBuffer.limit(byteBuffer.capacity());
 		buffer = byteBuffer.asFloatBuffer();
-		((Buffer) byteBuffer).limit(l);
-		((Buffer) buffer).limit(l / 4);
+		byteBuffer.limit(l);
+		buffer.limit(l / 4);
 	}
 
 	private void bufferChanged () {
@@ -119,8 +119,8 @@ public class InstanceBufferObject implements InstanceData {
 	public void setInstanceData (float[] data, int offset, int count) {
 		isDirty = true;
 		BufferUtils.copy(data, byteBuffer, count, offset);
-		((Buffer) buffer).position(0);
-		((Buffer) buffer).limit(count);
+		buffer.position(0);
+		buffer.limit(count);
 		bufferChanged();
 	}
 
@@ -128,8 +128,8 @@ public class InstanceBufferObject implements InstanceData {
 	public void setInstanceData (FloatBuffer data, int count) {
 		isDirty = true;
 		BufferUtils.copy(data, byteBuffer, count);
-		((Buffer) buffer).position(0);
-		((Buffer) buffer).limit(count);
+		buffer.position(0);
+		buffer.limit(count);
 		bufferChanged();
 	}
 
@@ -137,10 +137,10 @@ public class InstanceBufferObject implements InstanceData {
 	public void updateInstanceData (int targetOffset, float[] data, int sourceOffset, int count) {
 		isDirty = true;
 		final int pos = byteBuffer.position();
-		((Buffer) byteBuffer).position(targetOffset * 4);
+		byteBuffer.position(targetOffset * 4);
 		BufferUtils.copy(data, sourceOffset, count, byteBuffer);
-		((Buffer) byteBuffer).position(pos);
-		((Buffer) buffer).position(0);
+		byteBuffer.position(pos);
+		buffer.position(0);
 		bufferChanged();
 	}
 
@@ -148,11 +148,11 @@ public class InstanceBufferObject implements InstanceData {
 	public void updateInstanceData (int targetOffset, FloatBuffer data, int sourceOffset, int count) {
 		isDirty = true;
 		final int pos = byteBuffer.position();
-		((Buffer) byteBuffer).position(targetOffset * 4);
-		((Buffer) data).position(sourceOffset * 4);
+		byteBuffer.position(targetOffset * 4);
+		data.position(sourceOffset * 4);
 		BufferUtils.copy(data, byteBuffer, count);
-		((Buffer) byteBuffer).position(pos);
-		((Buffer) buffer).position(0);
+		byteBuffer.position(pos);
+		buffer.position(0);
 		bufferChanged();
 	}
 
@@ -190,7 +190,7 @@ public class InstanceBufferObject implements InstanceData {
 
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, bufferHandle);
 		if (isDirty) {
-			((Buffer) byteBuffer).limit(buffer.limit() * 4);
+			byteBuffer.limit(buffer.limit() * 4);
 			gl.glBufferData(GL20.GL_ARRAY_BUFFER, byteBuffer.limit(), byteBuffer, usage);
 			isDirty = false;
 		}
@@ -255,7 +255,7 @@ public class InstanceBufferObject implements InstanceData {
 				if (location < 0)
 					continue;
 				int unitOffset = +attribute.unit;
-				shader.disableVertexAttribute(location + unitOffset);
+				shader.enableVertexAttribute(location + unitOffset);
 			}
 		}
 		gl.glBindBuffer(GL20.GL_ARRAY_BUFFER, 0);

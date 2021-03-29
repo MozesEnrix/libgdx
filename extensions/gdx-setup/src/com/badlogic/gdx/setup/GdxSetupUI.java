@@ -268,7 +268,7 @@ public class GdxSetupUI extends JFrame {
 					}
 				}, ui.settings.getGradleArgs());
 				log("Done!");
-				log("To import in Eclipse: File -> Import -> Gradle -> Existing Gradle Project");
+				log("To import in Eclipse: File -> Import -> Gradle -> Gradle Project");
 				log("To import to Intellij IDEA: File -> Open -> build.gradle");
 				log("To import to NetBeans: File -> Open Project...");
 				SwingUtilities.invokeLater(new Runnable() {
@@ -426,7 +426,7 @@ public class GdxSetupUI extends JFrame {
 		private void uiEvents () {
 			advancedButton.addActionListener(new ActionListener() {
 				public void actionPerformed (ActionEvent e) {
-					settings.showDialog(form, form.gwtCheckBox);
+					settings.showDialog(form.gwtCheckBox);
 				}
 			});
 			generateButton.addActionListener(new ActionListener() {
@@ -493,12 +493,6 @@ public class GdxSetupUI extends JFrame {
 				extensionPanel.setOpaque(true);
 				extensionPanel.setBackground(new Color(46, 46, 46));
 			}
-
-			nameLabel.setToolTipText("The name of the application used in gradle");
-			packageLabel.setToolTipText("The package name of the application");
-			gameClassLabel.setToolTipText("The name of the main class implementing ApplicationListener");
-			destinationLabel.setToolTipText("The root directory of the project, it will be created if it does not exist");
-			sdkLocationLabel.setToolTipText("The location of your Android SDK");
 		}
 
 		private void uiLayout () {
@@ -530,6 +524,10 @@ public class GdxSetupUI extends JFrame {
 
 			for (final ProjectType projectType : ProjectType.values()) {
 				if (projectType.equals(ProjectType.CORE)) {
+					continue;
+				}
+				if (projectType == ProjectType.IOSMOE) {
+					//Disable
 					continue;
 				}
 
@@ -617,10 +615,10 @@ public class GdxSetupUI extends JFrame {
 			add(showMoreExtensionsButton, new GridBagConstraints(0, 12, 0, 1, 0, 0, CENTER, WEST, new Insets(10, 0, 10, 0), 0, 0));
 		}
 
-		File getDirectory (String dialogTitle) {
+		File getDirectory () {
 			if (System.getProperty("os.name").contains("Mac")) {
 				System.setProperty("apple.awt.fileDialogForDirectories", "true");
-				FileDialog dialog = new FileDialog(GdxSetupUI.this, dialogTitle, FileDialog.LOAD);
+				FileDialog dialog = new FileDialog(GdxSetupUI.this, "Choose destination", FileDialog.LOAD);
 				dialog.setVisible(true);
 				String name = dialog.getFile();
 				String dir = dialog.getDirectory();
@@ -629,8 +627,8 @@ public class GdxSetupUI extends JFrame {
 			} else {
 				JFileChooser chooser = new JFileChooser();
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				chooser.setDialogTitle(dialogTitle);
-				int result = chooser.showOpenDialog(GdxSetupUI.this);
+				chooser.setDialogTitle("Choose destination");
+				int result = chooser.showOpenDialog(null);
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File dir = chooser.getSelectedFile();
 					if (dir == null) return null;
@@ -645,7 +643,7 @@ public class GdxSetupUI extends JFrame {
 		private void uiEvents () {
 			destinationButton.addActionListener(new ActionListener() {
 				public void actionPerformed (ActionEvent e) {
-					File path = getDirectory("Choose destination");
+					File path = getDirectory();
 					if (path != null) {
 						destinationText.setText(path.getAbsolutePath());
 					}
@@ -654,7 +652,7 @@ public class GdxSetupUI extends JFrame {
 			sdkLocationButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed (ActionEvent e) {
-					File path = getDirectory("Choose Android SDK");
+					File path = getDirectory();
 					if (path != null) {
 						sdkLocationText.setText(path.getAbsolutePath());
 						prefs.putString("ANDROID_HOME", path.getAbsolutePath());
@@ -664,7 +662,7 @@ public class GdxSetupUI extends JFrame {
 			});
 			showMoreExtensionsButton.addActionListener(new ActionListener() {
 				 public void actionPerformed (ActionEvent e) {
-					  externalExtensionsDialog.showDialog(Form.this);
+					  externalExtensionsDialog.showDialog();
 				 }
 			});
 		}

@@ -4,7 +4,6 @@ package com.badlogic.gdx.tools.ktx;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.zip.GZIPOutputStream;
 
@@ -363,7 +362,7 @@ public class KTXProcessor {
 		public byte[] getBytes () {
 			if (etcData != null) {
 				byte[] result = new byte[getSize()];
-				((Buffer) etcData.compressedData).position(etcData.dataOffset);
+				etcData.compressedData.position(etcData.dataOffset);
 				etcData.compressedData.get(result);
 				return result;
 			}

@@ -154,9 +154,9 @@ public class PolygonSpriteBatch implements PolygonBatch {
 
 		Gdx.gl.glDepthMask(false);
 		if (customShader != null)
-			customShader.bind();
+			customShader.begin();
 		else
-			shader.bind();
+			shader.begin();
 		setupMatrices();
 
 		drawing = true;
@@ -172,6 +172,11 @@ public class PolygonSpriteBatch implements PolygonBatch {
 		GL20 gl = Gdx.gl;
 		gl.glDepthMask(true);
 		if (isBlendingEnabled()) gl.glDisable(GL20.GL_BLEND);
+
+		if (customShader != null)
+			customShader.end();
+		else
+			shader.end();
 	}
 
 	@Override
@@ -1299,7 +1304,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 		if (drawing) setupMatrices();
 	}
 
-	protected void setupMatrices () {
+	private void setupMatrices () {
 		combinedMatrix.set(projectionMatrix).mul(transformMatrix);
 		if (customShader != null) {
 			customShader.setUniformMatrix("u_projTrans", combinedMatrix);
@@ -1321,13 +1326,17 @@ public class PolygonSpriteBatch implements PolygonBatch {
 	public void setShader (ShaderProgram shader) {
 		if (drawing) {
 			flush();
+			if (customShader != null)
+				customShader.end();
+			else
+				this.shader.end();
 		}
 		customShader = shader;
 		if (drawing) {
 			if (customShader != null)
-				customShader.bind();
+				customShader.begin();
 			else
-				this.shader.bind();
+				this.shader.begin();
 			setupMatrices();
 		}
 	}

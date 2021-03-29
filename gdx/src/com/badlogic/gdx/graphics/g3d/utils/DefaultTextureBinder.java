@@ -29,17 +29,19 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
  * @author xoppa */
 public final class DefaultTextureBinder implements TextureBinder {
 	public final static int ROUNDROBIN = 0;
-	public final static int LRU = 1;
+	public final static int WEIGHTED = 1;
 	/** GLES only supports up to 32 textures */
 	public final static int MAX_GLES_UNITS = 32;
 	/** The index of the first exclusive texture unit */
 	private final int offset;
 	/** The amount of exclusive textures that may be used */
 	private final int count;
+	/** The weight added to a texture when its reused */
+	private final int reuseWeight;
 	/** The textures currently exclusive bound */
 	private final GLTexture[] textures;
-	/** Texture units ordered from most to least recently used */
-	private int [] unitsLRU;
+	/** The weight (reuseWeight * reused - discarded) of the textures */
+	private final int[] weights;
 	/** The method of binding to use */
 	private final int method;
 	/** Flag to indicate the current texture is reused */
@@ -58,16 +60,22 @@ public final class DefaultTextureBinder implements TextureBinder {
 		this(method, offset, -1);
 	}
 
-	public DefaultTextureBinder (final int method, final int offset, int count) {
+	/** Uses reuse weight of 10 */
+	public DefaultTextureBinder (final int method, final int offset, final int count) {
+		this(method, offset, count, 10);
+	}
+
+	public DefaultTextureBinder (final int method, final int offset, int count, final int reuseWeight) {
 		final int max = Math.min(getMaxTextureUnits(), MAX_GLES_UNITS);
 		if (count < 0) count = max - offset;
-		if (offset < 0 || count < 0 || (offset + count) > max)
+		if (offset < 0 || count < 0 || (offset + count) > max || reuseWeight < 1)
 			throw new GdxRuntimeException("Illegal arguments");
 		this.method = method;
 		this.offset = offset;
 		this.count = count;
 		this.textures = new GLTexture[count];
-		this.unitsLRU = (method == LRU) ? new int[count] : null;
+		this.reuseWeight = reuseWeight;
+		this.weights = (method == WEIGHTED) ? new int[count] : null;
 	}
 
 	private static int getMaxTextureUnits () {
@@ -80,7 +88,7 @@ public final class DefaultTextureBinder implements TextureBinder {
 	public void begin () {
 		for (int i = 0; i < count; i++) {
 			textures[i] = null;
-			if (unitsLRU != null) unitsLRU[i] = i;
+			if (weights != null) weights[i] = 0;
 		}
 	}
 
@@ -116,8 +124,8 @@ public final class DefaultTextureBinder implements TextureBinder {
 		case ROUNDROBIN:
 			result = offset + (idx = bindTextureRoundRobin(texture));
 			break;
-		case LRU:
-			result = offset + (idx = bindTextureLRU(texture));
+		case WEIGHTED:
+			result = offset + (idx = bindTextureWeighted(texture));
 			break;
 		default:
 			return -1;
@@ -152,30 +160,26 @@ public final class DefaultTextureBinder implements TextureBinder {
 		return currentTexture;
 	}
 
-	private final int bindTextureLRU (final GLTexture texture) {
-		int i;
-		for (i = 0; i < count; i++) {
-			final int idx = unitsLRU[i];
-			if (textures[idx] == texture) {
-				reused = true;
-				break;
+	private final int bindTextureWeighted (final GLTexture texture) {
+		int result = -1;
+		int weight = weights[0];
+		int windex = 0;
+		for (int i = 0; i < count; i++) {
+			if (textures[i] == texture) {
+				result = i;
+				weights[i] += reuseWeight;
+			} else if (weights[i] < 0 || --weights[i] < weight) {
+				weight = weights[i];
+				windex = i;
 			}
-			if (textures[idx] == null) {
-				break;
-			}
 		}
-		if (i >= count) i = count - 1;
-		final int idx = unitsLRU[i];
-		while (i > 0) {
-			unitsLRU[i] = unitsLRU[i - 1];
-			i--;
-		}
-		unitsLRU[0] = idx;
-		if (!reused) {
-			textures[idx] = texture;
-			texture.bind(offset + idx);
-		}
-		return idx;
+		if (result < 0) {
+			textures[windex] = texture;
+			weights[windex] = 100;
+			texture.bind(offset + (result = windex));
+		} else
+			reused = true;
+		return result;
 	}
 
 	@Override

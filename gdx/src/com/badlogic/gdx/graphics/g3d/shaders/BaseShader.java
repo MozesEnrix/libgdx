@@ -204,7 +204,7 @@ public abstract class BaseShader implements Shader {
 	public void begin (Camera camera, RenderContext context) {
 		this.camera = camera;
 		this.context = context;
-		program.bind();
+		program.begin();
 		currentMesh = null;
 		for (int u, i = 0; i < globalUniforms.size; ++i)
 			if (setters.get(u = globalUniforms.get(i)) != null) setters.get(u).set(this, u, null, null);
@@ -250,6 +250,7 @@ public abstract class BaseShader implements Shader {
 			currentMesh.unbind(program, tempArray.items);
 			currentMesh = null;
 		}
+		program.end();
 	}
 
 	@Override

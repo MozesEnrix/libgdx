@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 
 package com.badlogic.gdx.graphics.glutils;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -29,11 +28,11 @@ import com.badlogic.gdx.utils.BufferUtils;
  * Convenience class for working with OpenGL vertex arrays. It interleaves all data in the order you specified in the constructor
  * via {@link VertexAttribute}.
  * </p>
- *
+ * 
  * <p>
  * This class is not compatible with OpenGL 3+ core profiles. For this {@link VertexBufferObject}s are needed.
  * </p>
- *
+ * 
  * @author mzechner, Dave Clayton <contact@redskyforge.com> */
 public class VertexArray implements VertexData {
 	final VertexAttributes attributes;
@@ -42,7 +41,7 @@ public class VertexArray implements VertexData {
 	boolean isBound = false;
 
 	/** Constructs a new interleaved VertexArray
-	 *
+	 * 
 	 * @param numVertices the maximum number of vertices
 	 * @param attributes the {@link VertexAttribute}s */
 	public VertexArray (int numVertices, VertexAttribute... attributes) {
@@ -50,15 +49,15 @@ public class VertexArray implements VertexData {
 	}
 
 	/** Constructs a new interleaved VertexArray
-	 *
+	 * 
 	 * @param numVertices the maximum number of vertices
 	 * @param attributes the {@link VertexAttributes} */
 	public VertexArray (int numVertices, VertexAttributes attributes) {
 		this.attributes = attributes;
 		byteBuffer = BufferUtils.newUnsafeByteBuffer(this.attributes.vertexSize * numVertices);
 		buffer = byteBuffer.asFloatBuffer();
-		((Buffer) buffer).flip();
-		((Buffer) byteBuffer).flip();
+		buffer.flip();
+		byteBuffer.flip();
 	}
 
 	@Override
@@ -83,16 +82,16 @@ public class VertexArray implements VertexData {
 	@Override
 	public void setVertices (float[] vertices, int offset, int count) {
 		BufferUtils.copy(vertices, byteBuffer, count, offset);
-		((Buffer) buffer).position(0);
-		((Buffer) buffer).limit(count);
+		buffer.position(0);
+		buffer.limit(count);
 	}
 
 	@Override
 	public void updateVertices (int targetOffset, float[] vertices, int sourceOffset, int count) {
 		final int pos = byteBuffer.position();
-		((Buffer) byteBuffer).position(targetOffset * 4);
+		byteBuffer.position(targetOffset * 4);
 		BufferUtils.copy(vertices, sourceOffset, count, byteBuffer);
-		((Buffer) byteBuffer).position(pos);
+		byteBuffer.position(pos);
 	}
 
 	@Override
@@ -103,7 +102,7 @@ public class VertexArray implements VertexData {
 	@Override
 	public void bind (final ShaderProgram shader, final int[] locations) {
 		final int numAttributes = attributes.size();
-		((Buffer) byteBuffer).limit(buffer.limit() * 4);
+		byteBuffer.limit(buffer.limit() * 4);
 		if (locations == null) {
 			for (int i = 0; i < numAttributes; i++) {
 				final VertexAttribute attribute = attributes.get(i);
@@ -112,11 +111,11 @@ public class VertexArray implements VertexData {
 				shader.enableVertexAttribute(location);
 
 				if (attribute.type == GL20.GL_FLOAT) {
-					((Buffer) buffer).position(attribute.offset / 4);
+					buffer.position(attribute.offset / 4);
 					shader.setVertexAttribute(location, attribute.numComponents, attribute.type, attribute.normalized,
 						attributes.vertexSize, buffer);
 				} else {
-					((Buffer) byteBuffer).position(attribute.offset);
+					byteBuffer.position(attribute.offset);
 					shader.setVertexAttribute(location, attribute.numComponents, attribute.type, attribute.normalized,
 						attributes.vertexSize, byteBuffer);
 				}
@@ -129,11 +128,11 @@ public class VertexArray implements VertexData {
 				shader.enableVertexAttribute(location);
 
 				if (attribute.type == GL20.GL_FLOAT) {
-					((Buffer) buffer).position(attribute.offset / 4);
+					buffer.position(attribute.offset / 4);
 					shader.setVertexAttribute(location, attribute.numComponents, attribute.type, attribute.normalized,
 						attributes.vertexSize, buffer);
 				} else {
-					((Buffer) byteBuffer).position(attribute.offset);
+					byteBuffer.position(attribute.offset);
 					shader.setVertexAttribute(location, attribute.numComponents, attribute.type, attribute.normalized,
 						attributes.vertexSize, byteBuffer);
 				}
@@ -143,7 +142,7 @@ public class VertexArray implements VertexData {
 	}
 
 	/** Unbinds this VertexBufferObject.
-	 *
+	 * 
 	 * @param shader the shader */
 	@Override
 	public void unbind (ShaderProgram shader) {
@@ -170,7 +169,7 @@ public class VertexArray implements VertexData {
 	public VertexAttributes getAttributes () {
 		return attributes;
 	}
-
+	
 	@Override
 	public void invalidate () {
 	}
