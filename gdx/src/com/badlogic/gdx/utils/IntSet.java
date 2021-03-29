@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.utils;
 
-import static com.badlogic.gdx.utils.ObjectSet.*;
-
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+import static com.badlogic.gdx.utils.ObjectSet.tableSize;
 
 /** An unordered set where the items are unboxed ints. No allocation is done except when growing the table size.
  * <p>
@@ -60,7 +60,7 @@ public class IntSet {
 	 * hash. */
 	protected int mask;
 
-	private IntSetIterator iterator1, iterator2;
+	private transient IntSetIterator iterator1, iterator2;
 
 	/** Creates a new set with an initial capacity of 51 and a load factor of 0.8. */
 	public IntSet () {
@@ -195,10 +195,13 @@ public class IntSet {
 		int i = locateKey(key);
 		if (i < 0) return false;
 		int[] keyTable = this.keyTable;
-		int next = i + 1 & mask;
-		while ((key = keyTable[next]) != 0 && next != place(key)) {
-			keyTable[i] = key;
-			i = next;
+		int mask = this.mask, next = i + 1 & mask;
+		while ((key = keyTable[next]) != 0) {
+			int placement = place(key);
+			if ((next - placement & mask) > (i - placement & mask)) {
+				keyTable[i] = key;
+				i = next;
+			}
 			next = next + 1 & mask;
 		}
 		keyTable[i] = 0;
@@ -246,7 +249,7 @@ public class IntSet {
 
 	public boolean contains (int key) {
 		if (key == 0) return hasZeroValue;
-		return locateKey(key) != -1;
+		return locateKey(key) >= 0;
 	}
 
 	public int first () {
@@ -400,9 +403,12 @@ public class IntSet {
 			} else {
 				int[] keyTable = set.keyTable;
 				int mask = set.mask, next = i + 1 & mask, key;
-				while ((key = keyTable[next]) != 0 && next != set.place(key)) {
-					keyTable[i] = key;
-					i = next;
+				while ((key = keyTable[next]) != 0) {
+					int placement = set.place(key);
+					if ((next - placement & mask) > (i - placement & mask)) {
+						keyTable[i] = key;
+						i = next;
+					}
 					next = next + 1 & mask;
 				}
 				keyTable[i] = 0;
